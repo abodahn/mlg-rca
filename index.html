@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="Multi Level Group - Field Support Operations">
 <meta name="description" content="Root Cause Analysis Report Template - MLG Field Support SOP">
-<meta name="version" content="1.3">
+<meta name="version" content="1.5">
 <meta name="department" content="MLG Field Support & Hardware Operations">
 <title>RCA Report | MLG Field Support SOP | تقرير تحليل السبب الجذري</title>
 <style>
@@ -443,7 +443,7 @@
   <div class="header">
     <h1>Root Cause Analysis Report</h1>
     <h2>تقرير تحليل السبب الجذري</h2>
-    <div class="subtitle">MLG Field Support SOP — Document Version 1.3 | إجراء التشغيل القياسي للدعم الميداني</div>
+    <div class="subtitle">MLG Field Support SOP — Document Version 1.5 | إجراء التشغيل القياسي للدعم الميداني</div>
   </div>
 
   <div class="content">
@@ -457,7 +457,7 @@
       </div>
       <div class="wizard-meta">
         <span class="badge">Page <span id="pageNow">1</span>/3</span>
-        <span class="badge">Version 1.3</span>
+        <span class="badge">Version 1.5</span>
       </div>
     </div>
 
@@ -483,11 +483,11 @@
         <div class="form-row">
           <div class="form-field">
             <div class="field-label">Machine ID<div class="ar">رقم تعريف الجهاز</div></div>
-            <div class="field-input"><input type="text" placeholder="e.g. MOJ-18"></div>
+            <div class="field-input"><input id="machineIdInput" type="text" placeholder="e.g. MOJ-00018" list="machineIdList"></div>
           </div>
           <div class="form-field">
             <div class="field-label">Location / Site<div class="ar">الموقع / المحكمة</div></div>
-            <div class="field-input"><input type="text" placeholder="e.g. Minya Court"></div>
+            <div class="field-input"><input id="locationInput" type="text" placeholder="e.g. Minya" list="locationList"></div>
           </div>
         </div>
         <div class="form-row">
@@ -517,6 +517,10 @@
             </div>
           </div>
         </div>
+        <!-- MOJ Sites (Auto-fill) -->
+        <datalist id="locationList"></datalist>
+        <datalist id="machineIdList"></datalist>
+
         <div class="form-row">
           <div class="form-field">
             <div class="field-label">Project Manager<div class="ar">مدير المشروع</div></div>
@@ -851,7 +855,7 @@
         <strong style="color: var(--primary);">التحكم بالوثائق:</strong> هذا النموذج جزء من إطار إجراءات التشغيل القياسية للدعم الميداني في مجموعة ملتي ليفل.
         <br><br>
         <span style="font-size: 10px;">
-          Document ID: MLG-SOP-RCA-001 &nbsp;|&nbsp; Version: 1.3 &nbsp;|&nbsp; Department: Field Support & Hardware Operations &nbsp;|&nbsp; 
+          Document ID: MLG-SOP-RCA-001 &nbsp;|&nbsp; Version: 1.5 &nbsp;|&nbsp; Department: Field Support & Hardware Operations &nbsp;|&nbsp; 
           Prepared by: MLG Quality & Compliance &nbsp;|&nbsp; Effective Date: March 2026
         </span>
       </div>
@@ -863,6 +867,7 @@
 
   <!-- BUTTONS -->
   
+
 <div class="btn-bar">
     <button class="btn btn-primary" onclick="window.print()">🖨️ Print / طباعة</button>
     <button class="btn btn-accent" onclick="clearAll()">🗑️ Clear All / مسح الكل</button>
@@ -870,32 +875,86 @@
     <button class="btn" id="btnPrev" style="background:#34495E;color:white;" onclick="prevPage()">⬅️ Previous / السابق</button>
     <button class="btn" id="btnNext" style="background:#1B3A5C;color:white;" onclick="nextPage()">Next / التالي ➡️</button>
 
-
     <button class="btn" style="background:#2ECC71;color:white;" onclick="exportToExcel()">📊 Export Excel / تصدير إكسل</button>
-
-    <button class="btn" style="background:#27AE60;color:white;" onclick="saveAsDraftFile()">💾 Save Draft (JSON) / حفظ مسودة</button>
-    <button class="btn" style="background:#3498DB;color:white;" onclick="loadDraftFile()">📂 Load Draft (JSON) / تحميل مسودة</button>
-
-    <button class="btn" style="background:#8E44AD;color:white;" onclick="saveToBrowser()">🧠 Save to Browser / حفظ في المتصفح</button>
-    <button class="btn" style="background:#16A085;color:white;" onclick="loadFromBrowser()">↩️ Load from Browser / تحميل من المتصفح</button>
-    <button class="btn" style="background:#7F8C8D;color:white;" onclick="clearBrowserDraft()">🧹 Clear Browser Draft / مسح مسودة المتصفح</button>
-
-    <span id="autosaveStatus" style="margin-left:10px;font-size:12px;color:#444;align-self:center;"></span>
 </div>
 </div>
 
 <script>
-
 /**
- * MLG RCA Template v1.1 Enhancements
- * - Stable(ish) field keys (no more numeric-only indexing)
- * - Autosave to localStorage (latest draft)
- * - Save/Load Draft as JSON file (portable)
- * - Save/Load Draft in browser (quick)
+ * MLG RCA Template v1.5
+ * - 3-page wizard (Next/Previous)
+ * - Print-friendly (prints all pages)
+ * - Export to Excel (formatted)
+ * - MOJ site list: auto-fill Location <-> Machine ID
  */
-const TEMPLATE_VERSION = "1.3";
-const AUTOSAVE_KEY = "MLG_RCA_AUTOSAVE_LATEST_V1_3";
+const TEMPLATE_VERSION = "1.5";
 
+/* ---------- MOJ Site Master Data ---------- */
+const MOJ_SITES = [
+  { location: "Central", machineId: "MOJ-00001" },
+  { location: "South Cairo", machineId: "MOJ-00002" },
+  { location: "North Cairo", machineId: "MOJ-00003" },
+  { location: "East Alexandria", machineId: "MOJ-00004" },
+  { location: "West Alexandria", machineId: "MOJ-00005" },
+  { location: "North damohur", machineId: "MOJ-00006" },
+  { location: "GAFI-ALEX", machineId: "MOJ-00007" },
+  { location: "South Giza", machineId: "MOJ-00008" },
+  { location: "North Banha", machineId: "MOJ-00009" },
+  { location: "south Banha", machineId: "MOJ-00010" },
+  { location: "North Giza", machineId: "MOJ-00011" },
+  { location: "Sharm El-Sheikh", machineId: "MOJ-00012" },
+  { location: "CityStars", machineId: "MOJ-00013" },
+  { location: "GAFI-Cairo", machineId: "MOJ-00014" },
+  { location: "Hurghada", machineId: "MOJ-00015" },
+  { location: "Aswan", machineId: "MOJ-00016" },
+  { location: "Suhag", machineId: "MOJ-00017" },
+  { location: "Minya", machineId: "MOJ-00018" },
+  { location: "Portsaid", machineId: "MOJ-00019" },
+  { location: "Ismailia", machineId: "MOJ-00020" },
+  { location: "Suez", machineId: "MOJ-00021" },
+  { location: "Fayoum", machineId: "MOJ-00022" },
+  { location: "South Mansoura", machineId: "MOJ-00023" },
+  { location: "North Zagazig", machineId: "MOJ-00024" },
+  { location: "South Zagazig", machineId: "MOJ-00025" },
+  { location: "Shebeen Alkom", machineId: "MOJ-00026" },
+  { location: "Marsa Matrouh", machineId: "MOJ-00027" },
+  { location: "North Mansoura", machineId: "MOJ-00028" },
+  { location: "New Cairo", machineId: "MOJ-00029" }
+];
+
+function normalize(s) { return String(s || "").trim().toLowerCase(); }
+
+function fillMOJDatalists() {
+  const locList = document.getElementById("locationList");
+  const idList  = document.getElementById("machineIdList");
+  if (!locList || !idList) return;
+  locList.innerHTML = "";
+  idList.innerHTML = "";
+  MOJ_SITES.forEach(item => {
+    const o1 = document.createElement("option");
+    o1.value = item.location;
+    locList.appendChild(o1);
+    const o2 = document.createElement("option");
+    o2.value = item.machineId;
+    idList.appendChild(o2);
+  });
+}
+
+function syncFromLocation() {
+  const loc = document.getElementById("locationInput");
+  const mid = document.getElementById("machineIdInput");
+  if (!loc || !mid) return;
+  const hit = MOJ_SITES.find(x => normalize(x.location) === normalize(loc.value));
+  if (hit) mid.value = hit.machineId;
+}
+
+function syncFromMachineId() {
+  const loc = document.getElementById("locationInput");
+  const mid = document.getElementById("machineIdInput");
+  if (!loc || !mid) return;
+  const hit = MOJ_SITES.find(x => normalize(x.machineId) === normalize(mid.value));
+  if (hit) loc.value = hit.location;
+}
 
 /* ---------- Wizard (3 Pages) ---------- */
 let CURRENT_PAGE = 1;
@@ -910,7 +969,6 @@ function setActivePage(n, persist=true) {
     p.classList.toggle("active", pageNum === target);
   });
 
-  // Step pills
   const pills = Array.from(document.querySelectorAll(".step-pill"));
   pills.forEach(p => {
     const step = parseInt(p.getAttribute("data-step") || "0", 10);
@@ -918,24 +976,18 @@ function setActivePage(n, persist=true) {
     p.classList.toggle("done", step < target);
   });
 
-  // Page indicator
   const now = document.getElementById("pageNow");
   if (now) now.textContent = String(target);
 
-  // Prev/Next buttons
   const btnPrev = document.getElementById("btnPrev");
   const btnNext = document.getElementById("btnNext");
   if (btnPrev) btnPrev.disabled = (target === 1);
-  if (btnNext) {
-    btnNext.disabled = false;
-    btnNext.textContent = (target === 3) ? "Finish / إنهاء ✅" : "Next / التالي ➡️";
-  }
+  if (btnNext) btnNext.textContent = (target === 3) ? "Finish / إنهاء ✅" : "Next / التالي ➡️";
 
   if (persist) {
     try { sessionStorage.setItem("MLG_RCA_CURRENT_PAGE", String(target)); } catch(e) {}
   }
 
-  // Scroll to top of content for UX
   try { window.scrollTo({top: 0, behavior: "smooth"}); } catch(e) { window.scrollTo(0,0); }
 }
 
@@ -946,145 +998,17 @@ function nextPage() {
 }
 function prevPage() { if (CURRENT_PAGE > 1) setActivePage(CURRENT_PAGE - 1); }
 
-
-/* ---------- Utilities ---------- */
-function normalizeKey(s) {
-  return (s || "")
-    .toString()
-    .toLowerCase()
-    .replace(/\s+/g, "_")
-    .replace(/[^a-z0-9_]/g, "")
-    .replace(/_+/g, "_")
-    .replace(/^_+|_+$/g, "")
-    .slice(0, 120);
-}
-
-function getSectionTitle(el) {
-  const section = el.closest(".section");
-  if (!section) return "global";
-  const t = section.querySelector(".section-title .en");
-  return (t && t.textContent) ? t.textContent.trim() : "section";
-}
-
-function getPrimaryLabel(el) {
-  // Normal form fields
-  const formField = el.closest(".form-field");
-  if (formField) {
-    const label = formField.querySelector(".field-label");
-    if (label) {
-      const text = (label.childNodes && label.childNodes[0]) ? label.childNodes[0].textContent : label.textContent;
-      return (text || "").trim();
-    }
+/* ---------- Actions ---------- */
+function clearAll() {
+  if (confirm("Are you sure you want to clear all fields?\nهل أنت متأكد من مسح جميع الحقول؟")) {
+    document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = '');
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
   }
-  // Five Whys
-  const whyRow = el.closest(".why-row");
-  if (whyRow) {
-    const w = whyRow.querySelector(".why-label");
-    const text = (w && w.childNodes && w.childNodes[0]) ? w.childNodes[0].textContent : (w ? w.textContent : "");
-    return (text || "").trim();
-  }
-  // Tables: coordinates
-  const td = el.closest("td");
-  const tr = el.closest("tr");
-  const table = el.closest("table");
-  if (td && tr && table) {
-    const body = table.querySelector("tbody");
-    const rows = body ? Array.from(body.querySelectorAll("tr")) : Array.from(table.querySelectorAll("tr"));
-    const rowIndex = rows.indexOf(tr);
-    const cellIndex = Array.from(tr.children).indexOf(td);
-    const secTitle = (table.closest(".section")?.querySelector(".section-title .en")?.textContent || "");
-    const tableHint =
-      table.classList.contains("parts-table") ? "parts" :
-      (secTitle.includes("Timeline") ? "timeline" :
-      (secTitle.includes("Action Tracker") ? "actions" :
-      (secTitle.includes("Contributing") ? "contrib" : "table")));
-    return `${tableHint}_r${rowIndex}_c${cellIndex}`;
-  }
-  return el.getAttribute("placeholder") || el.getAttribute("aria-label") || el.id || el.name || "field";
 }
-
-function fieldKey(el) {
-  if (el.name) return normalizeKey("n_" + el.name);
-  if (el.id) return normalizeKey("id_" + el.id);
-  const sec = getSectionTitle(el);
-  const lab = getPrimaryLabel(el);
-  const type = el.type || el.tagName;
-  return normalizeKey(`${sec}__${lab}__${type}`);
-}
-
-function getAllFields() {
-  return Array.from(document.querySelectorAll("input, textarea, select"))
-    .filter(el => {
-      if (el.closest(".btn-bar")) return false;
-      if (el.type === "button" || el.type === "submit" || el.type === "reset" || el.tagName === "BUTTON") return false;
-      return true;
-    });
-}
-
-/* ---------- Data Model ---------- */
-function collectData() {
-  const data = {
-    meta: {
-      template: "MLG-SOP-RCA-001",
-      template_version: TEMPLATE_VERSION,
-      saved_at: new Date().toISOString()
-    },
-    fields: {},
-    checks: {},
-    radios: {}
-  };
-
-  const fields = getAllFields();
-  fields.forEach(el => {
-    const k = fieldKey(el);
-
-    if (el.type === "checkbox") {
-      data.checks[k] = !!el.checked;
-      return;
-    }
-    if (el.type === "radio") {
-      if (el.checked) data.radios[el.name || k] = el.value;
-      return;
-    }
-
-    const v = (el.value ?? "").toString();
-    if (v.trim() !== "") data.fields[k] = v;
-  });
-
-  return data;
-}
-
-function applyData(data) {
-  if (!data) return;
-
-  const fields = getAllFields();
-  const hasNewModel = !!data.fields || !!data.checks || !!data.radios;
-  const flat = (!hasNewModel && typeof data === "object") ? data : null;
-
-  fields.forEach(el => {
-    const k = fieldKey(el);
-
-    if (el.type === "checkbox") {
-      if (hasNewModel && data.checks && k in data.checks) el.checked = !!data.checks[k];
-      else if (flat && k in flat) el.checked = !!flat[k];
-      return;
-    }
-    if (el.type === "radio") {
-      const groupKey = el.name || k;
-      const wanted = hasNewModel ? (data.radios ? data.radios[groupKey] : null) : (flat ? flat[groupKey] : null);
-      if (wanted != null && el.value === wanted) el.checked = true;
-      return;
-    }
-
-    const wanted = hasNewModel ? (data.fields ? data.fields[k] : null) : (flat ? flat[k] : null);
-    if (wanted != null) el.value = wanted;
-  });
-}
-
 
 /* ---------- Excel Export (SpreadsheetML) ---------- */
-function xmlEscape(v) {
-  return (v ?? "").toString()
+function xmlEscape(s) {
+  return String(s ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -1092,641 +1016,239 @@ function xmlEscape(v) {
     .replace(/'/g, "&apos;");
 }
 
-function getValueByLabel(labelStartsWith) {
+function getInputByLabel(labelText) {
   const labels = Array.from(document.querySelectorAll(".field-label"));
-  const target = labels.find(l => {
-    const first = (l.childNodes && l.childNodes[0]) ? l.childNodes[0].textContent : l.textContent;
-    return (first || "").trim().startsWith(labelStartsWith);
-  });
-  if (!target) return "";
-  const field = target.closest(".form-field");
-  if (!field) return "";
-  const el = field.querySelector("input, textarea, select");
-  return el ? (el.value || "") : "";
+  const label = labels.find(l => l.textContent.trim().startsWith(labelText));
+  if (!label) return null;
+  const row = label.closest(".form-field");
+  if (!row) return null;
+  return row.querySelector(".field-input input, .field-input select");
 }
 
-function getTextareaByLabel(labelStartsWith) {
+function getTextareaByLabel(labelText) {
   const labels = Array.from(document.querySelectorAll(".field-label"));
-  const target = labels.find(l => {
-    const first = (l.childNodes && l.childNodes[0]) ? l.childNodes[0].textContent : l.textContent;
-    return (first || "").trim().startsWith(labelStartsWith);
-  });
-  if (!target) return "";
-  const field = target.closest(".form-field");
-  if (!field) return "";
-  const el = field.querySelector("textarea");
-  return el ? (el.value || "") : "";
+  const label = labels.find(l => l.textContent.trim().startsWith(labelText));
+  if (!label) return null;
+  const row = label.closest(".form-field");
+  if (!row) return null;
+  return row.querySelector(".field-input textarea");
 }
 
 function getSeverity() {
-  const r = document.querySelector('input[name="severity"]:checked');
-  return r ? r.value : "";
+  const checked = document.querySelector('input[name="severity"]:checked');
+  return checked ? checked.value : "";
 }
 
-function getTableInputs(tableSelector) {
+function getTableValues(tableSelector) {
   const table = document.querySelector(tableSelector);
   if (!table) return [];
   const rows = Array.from(table.querySelectorAll("tbody tr"));
-  return rows.map(tr => {
-    const tds = Array.from(tr.querySelectorAll("td"));
-    // first td is row-num, rest have inputs
-    return tds.slice(1).map(td => {
-      const inp = td.querySelector("input, textarea, select");
-      return inp ? (inp.value || "") : (td.textContent || "").trim();
-    });
-  });
+  return rows.map(tr => Array.from(tr.querySelectorAll("td")).map(td => {
+    const inp = td.querySelector("input");
+    if (!inp) return td.textContent.trim();
+    return inp.value.trim();
+  }));
 }
 
 function getFiveWhys() {
-  const rows = Array.from(document.querySelectorAll(".why-row .why-input input"));
-  // order: Problem, Why1..Why5, Root Cause
-  return rows.map(r => r.value || "");
+  return Array.from(document.querySelectorAll(".why-input input")).map(i => i.value.trim());
 }
 
-function getContributingFactors() {
-  const section = Array.from(document.querySelectorAll(".section"))
-    .find(s => (s.querySelector(".section-title .en")?.textContent || "").includes("Contributing Factors"));
-  if (!section) return [];
-  const table = section.querySelector("table.data-table");
-  if (!table) return [];
-  const rows = Array.from(table.querySelectorAll("tbody tr"));
-  return rows.map(tr => {
-    const tds = Array.from(tr.children);
-    const cat = (tds[0]?.innerText || "").split("\n")[0].trim();
-    const factor = tds[1]?.querySelector("input")?.value || "";
-    const details = tds[2]?.querySelector("input")?.value || "";
-    return [cat, factor, details];
+function getRecommendations(groupEl) {
+  if (!groupEl) return { selected: [], other: "" };
+  const checks = Array.from(groupEl.querySelectorAll('input[type="checkbox"]'));
+  const labels = Array.from(groupEl.querySelectorAll("label"));
+  const selected = [];
+  checks.forEach((cb, i) => {
+    if (cb.checked) {
+      const txt = (labels[i] ? labels[i].innerText : "").trim().replace(/\s+/g, " ");
+      selected.push(txt);
+    }
   });
-}
-
-function getRecommendations(groupIndex) {
-  // groupIndex 0 = immediate, 1 = preventive
-  const groups = Array.from(document.querySelectorAll(".section"))
-    .filter(s => (s.querySelector(".section-title .en")?.textContent || "").includes("Recommendations"))
-    .flatMap(s => Array.from(s.querySelectorAll(".checkbox-group")));
-  const group = groups[groupIndex];
-  if (!group) return {selected: [], other: ""};
-
-  const labels = Array.from(group.querySelectorAll("label"));
-  const selected = labels
-    .filter(l => l.querySelector('input[type="checkbox"]')?.checked)
-    .map(l => (l.querySelector(".label-text")?.childNodes?.[0]?.textContent || l.innerText || "").trim())
-    .filter(Boolean);
-
-  // other-input is inside the group (direct child input.other-input)
-  const other = group.querySelector("input.other-input")?.value || "";
-  return {selected, other};
+  const otherInput = groupEl.querySelector(".other-input");
+  return { selected, other: otherInput ? otherInput.value.trim() : "" };
 }
 
 function getSignOff() {
-  const section = Array.from(document.querySelectorAll(".section"))
-    .find(s => (s.querySelector(".section-title .en")?.textContent || "").includes("Review & Sign-Off"));
-  if (!section) return [];
-  const rows = Array.from(section.querySelectorAll(".sign-row")).slice(1); // skip header row
+  const sec = Array.from(document.querySelectorAll(".section"))
+    .find(s => (s.querySelector(".section-title")?.innerText || "").includes("Review & Sign-Off"));
+  if (!sec) return [];
+  const signRows = sec.querySelectorAll(".sign-row");
+  if (!signRows || signRows.length < 2) return [];
+  const rows = Array.from(signRows).slice(1);
   return rows.map(r => {
     const cells = Array.from(r.querySelectorAll(".sign-cell"));
-    const role = (cells[0]?.innerText || "").split("\n")[0].trim();
-    const name = cells[1]?.querySelector("input")?.value || "";
-    const sig  = cells[2]?.querySelector("input")?.value || "";
-    const date = cells[3]?.querySelector("input")?.value || "";
+    const role = cells[0]?.innerText.trim().replace(/\s+/g, " ");
+    const name = cells[1]?.querySelector("input")?.value.trim() || "";
+    const sig  = cells[2]?.querySelector("input")?.value.trim() || "";
+    const date = cells[3]?.querySelector("input")?.value.trim() || "";
     return [role, name, sig, date];
   });
 }
 
-function makeSpreadsheetML(workbookName, sheets) {
-  // sheets: [{name, columns:[width...], rows:[[{v, style, mergeAcross, mergeDown}...]]}]
-  const styles = `
-    <Styles>
-      <Style ss:ID="Default" ss:Name="Normal">
-        <Alignment ss:Vertical="Center" ss:WrapText="1"/>
-        <Borders/>
-        <Font ss:FontName="Calibri" ss:Size="11" ss:Color="#333333"/>
-        <Interior/>
-        <NumberFormat/>
-        <Protection/>
-      </Style>
-      <Style ss:ID="Title">
-        <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>
-        <Font ss:FontName="Calibri" ss:Size="16" ss:Bold="1" ss:Color="#1B3A5C"/>
-      </Style>
-      <Style ss:ID="SectionHeader">
-        <Alignment ss:Horizontal="Left" ss:Vertical="Center"/>
-        <Font ss:Bold="1" ss:Color="#FFFFFF"/>
-        <Interior ss:Color="#1B3A5C" ss:Pattern="Solid"/>
-      </Style>
-      <Style ss:ID="Label">
-        <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/>
-        <Font ss:Bold="1" ss:Color="#333333"/>
-        <Interior ss:Color="#EBF0F5" ss:Pattern="Solid"/>
-        <Borders>
-          <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-        </Borders>
-      </Style>
-      <Style ss:ID="Value">
-        <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/>
-        <Borders>
-          <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-        </Borders>
-      </Style>
-      <Style ss:ID="TableHeader">
-        <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>
-        <Font ss:Bold="1" ss:Color="#FFFFFF"/>
-        <Interior ss:Color="#1B3A5C" ss:Pattern="Solid"/>
-        <Borders>
-          <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-        </Borders>
-      </Style>
-      <Style ss:ID="Cell">
-        <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/>
-        <Borders>
-          <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-          <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
-        </Borders>
-      </Style>
-      <Style ss:ID="SmallGray">
-        <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/>
-        <Font ss:Size="10" ss:Color="#666666"/>
-      </Style>
-    </Styles>`;
+function makeWorksheet(name, rows) {
+  let xml = `
+  <Worksheet ss:Name="${xmlEscape(name)}">
+    <Table>`;
+  rows.forEach(r => {
+    xml += "<Row>";
+    r.forEach(c => {
+      xml += `<Cell><Data ss:Type="String">${xmlEscape(c)}</Data></Cell>`;
+    });
+    xml += "</Row>";
+  });
+  xml += `
+    </Table>
+  </Worksheet>`;
+  return xml;
+}
 
-  function cellXml(cell) {
-    const v = xmlEscape(cell.v ?? "");
-    const style = cell.style ? ` ss:StyleID="${cell.style}"` : "";
-    const mergeAcross = (cell.mergeAcross != null) ? ` ss:MergeAcross="${cell.mergeAcross}"` : "";
-    const mergeDown = (cell.mergeDown != null) ? ` ss:MergeDown="${cell.mergeDown}"` : "";
-    // Treat everything as string for simplicity
-    return `<Cell${style}${mergeAcross}${mergeDown}><Data ss:Type="String">${v}</Data></Cell>`;
-  }
+function exportToExcel() {
+  const incidentRef = getInputByLabel("Incident Ref No.")?.value.trim() || "";
+  const doi = getInputByLabel("Date of Incident")?.value.trim() || "";
+  const machineId = document.getElementById("machineIdInput")?.value.trim() || "";
+  const location = document.getElementById("locationInput")?.value.trim() || "";
+  const projectName = getInputByLabel("Project Name")?.value.trim() || "";
+  const preparedBy = getInputByLabel("Report Prepared By")?.value.trim() || "";
+  const dateReported = getInputByLabel("Date Reported")?.value.trim() || "";
+  const severity = getSeverity();
+  const pm = getInputByLabel("Project Manager")?.value.trim() || "";
+  const fe = getInputByLabel("Field Engineer")?.value.trim() || "";
+  const sm = getInputByLabel("Support Manager")?.value.trim() || "";
+  const clientContact = getInputByLabel("Client Contact")?.value.trim() || "";
 
-  function rowXml(row) {
-    return `<Row>${row.map(cellXml).join("")}</Row>`;
-  }
+  const desc = getTextareaByLabel("Detailed Report")?.value.trim() || "";
+  const impact = getTextareaByLabel("Impact on Operations")?.value.trim() || "";
+  const affected = getTextareaByLabel("Affected Components")?.value.trim() || "";
 
-  function sheetXml(sheet) {
-    const cols = (sheet.columns || []).map(w => `<Column ss:AutoFitWidth="0" ss:Width="${w}"/>`).join("");
-    const rows = (sheet.rows || []).map(rowXml).join("");
-    return `
-      <Worksheet ss:Name="${xmlEscape(sheet.name)}">
-        <Table>${cols}${rows}</Table>
-        <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
-          <Print>
-            <ValidPrinterInfo/>
-            <PaperSizeIndex>9</PaperSizeIndex>
-            <Scale>90</Scale>
-            <FitWidth>1</FitWidth>
-            <FitHeight>0</FitHeight>
-          </Print>
-        </WorksheetOptions>
-      </Worksheet>`;
-  }
+  const parts = getTableValues(".parts-table");
+  const timeline = getTableValues(".section:nth-of-type(4) table.data-table");
+  const contributing = getTableValues(".section:nth-of-type(6) table.data-table");
+  const actions = getTableValues(".section:nth-of-type(8) table.data-table");
+  const whys = getFiveWhys();
+  const sign = getSignOff();
 
-  return `<?xml version="1.0"?>
+  const recSec = Array.from(document.querySelectorAll(".section"))
+    .find(s => (s.querySelector(".section-title")?.innerText || "").includes("Recommendations"));
+  const groups = recSec ? Array.from(recSec.querySelectorAll(".checkbox-group")) : [];
+  const recImmediate = getRecommendations(groups[0]);
+  const recPreventive = getRecommendations(groups[1]);
+
+  const sheet1 = [
+    ["Root Cause Analysis Report (MLG) — Summary", ""],
+    ["Template Version", TEMPLATE_VERSION],
+    ["Incident Ref No.", incidentRef],
+    ["Date of Incident", doi],
+    ["Machine ID", machineId],
+    ["Location / Site", location],
+    ["Project Name", projectName],
+    ["Report Prepared By", preparedBy],
+    ["Date Reported", dateReported],
+    ["Severity", severity],
+    ["Project Manager", pm],
+    ["Field Engineer", fe],
+    ["Support Manager", sm],
+    ["Client Contact", clientContact],
+    ["", ""],
+    ["Incident Description", ""],
+    ["Detailed Report", desc],
+    ["Impact on Operations", impact],
+    ["Affected Components", affected],
+  ];
+
+  const sheet2 = [
+    ["Parts Replacement Log", ""],
+    ["#", "Part Name", "Old Part S/N", "New Part S/N", "Machine ID", "Location", "Reason"],
+    ...parts,
+    ["", ""],
+    ["Timeline of Events", ""],
+    ["#", "Date", "Time", "Event / Action", "By Whom"],
+    ...timeline,
+    ["", ""],
+    ["Five Whys", ""],
+    ["Problem", whys[0] || ""],
+    ["Why 1", whys[1] || ""],
+    ["Why 2", whys[2] || ""],
+    ["Why 3", whys[3] || ""],
+    ["Why 4", whys[4] || ""],
+    ["Why 5", whys[5] || ""],
+    ["Root Cause", whys[6] || ""],
+    ["", ""],
+    ["Contributing Factors", ""],
+    ["Category", "Factor Identified", "Details / Evidence"],
+    ...contributing,
+  ];
+
+  const lessonsWrong = getTextareaByLabel("What Went Wrong")?.value.trim() || "";
+  const lessonsRight = getTextareaByLabel("What Went Right")?.value.trim() || "";
+  const lessonsSOP = getTextareaByLabel("SOP Updates Needed")?.value.trim() || "";
+
+  const sheet3 = [
+    ["Recommendations & Next Actions", ""],
+    ["Immediate Corrective Actions (selected)", recImmediate.selected.join(" | ")],
+    ["Immediate Other", recImmediate.other],
+    ["Preventive Actions (selected)", recPreventive.selected.join(" | ")],
+    ["Preventive Other", recPreventive.other],
+    ["", ""],
+    ["Action Tracker", ""],
+    ["#", "Action Item", "Assigned To", "Due Date", "Priority", "Status"],
+    ...actions,
+    ["", ""],
+    ["Lessons Learned", ""],
+    ["What Went Wrong", lessonsWrong],
+    ["What Went Right", lessonsRight],
+    ["SOP Updates Needed", lessonsSOP],
+    ["", ""],
+    ["Review & Sign-Off", ""],
+    ["Role", "Name", "Signature", "Date"],
+    ...sign,
+  ];
+
+  const workbook = `<?xml version="1.0"?>
 <?mso-application progid="Excel.Sheet"?>
 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
  xmlns:o="urn:schemas-microsoft-com:office:office"
  xmlns:x="urn:schemas-microsoft-com:office:excel"
  xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
  xmlns:html="http://www.w3.org/TR/REC-html40">
-  <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
-    <Title>${xmlEscape(workbookName)}</Title>
-    <Author>MLG Field Support</Author>
-    <Created>${new Date().toISOString()}</Created>
-  </DocumentProperties>
-  ${styles}
-  ${sheets.map(sheetXml).join("\n")}
+${makeWorksheet("Page 1 - Summary", sheet1)}
+${makeWorksheet("Page 2 - Analysis", sheet2)}
+${makeWorksheet("Page 3 - Actions", sheet3)}
 </Workbook>`;
-}
 
-
-function exportToExcel() {
-  // --- Collect data ---
-  const incidentRef = getValueByLabel("Incident Ref No.");
-  const dateIncident = getValueByLabel("Date of Incident");
-  const machineId = getValueByLabel("Machine ID");
-  const location = getValueByLabel("Location / Site");
-  const projectName = getValueByLabel("Project Name");
-  const preparedBy = getValueByLabel("Report Prepared By");
-  const dateReported = getValueByLabel("Date Reported");
-  const severity = getSeverity();
-  const pm = getValueByLabel("Project Manager");
-  const fe = getValueByLabel("Field Engineer");
-  const sm = getValueByLabel("Support Manager");
-  const client = getValueByLabel("Client Contact");
-
-  const detailed = getTextareaByLabel("Detailed Report");
-  const impact = getTextareaByLabel("Impact on Operations");
-  const affected = getTextareaByLabel("Affected Components");
-
-  const parts = getTableInputs("table.parts-table");
-
-  // Timeline table (section 4)
-  let timelineRows = [];
-  const timelineSection = Array.from(document.querySelectorAll(".section"))
-    .find(s => (s.querySelector(".section-title .en")?.textContent || "").includes("Timeline of Events"));
-  if (timelineSection) {
-    const t = timelineSection.querySelector("table.data-table");
-    if (t) {
-      const rows = Array.from(t.querySelectorAll("tbody tr"));
-      timelineRows = rows.map(tr => Array.from(tr.querySelectorAll("td")).slice(1).map(td => td.querySelector("input")?.value || ""));
-    }
-  }
-
-  const whys = getFiveWhys();
-  const contrib = getContributingFactors();
-
-  const recImmediate = getRecommendations(0);
-  const recPrevent = getRecommendations(1);
-
-  // Action tracker table (section 8)
-  let actions = [];
-  const actionSection = Array.from(document.querySelectorAll(".section"))
-    .find(s => (s.querySelector(".section-title .en")?.textContent || "").includes("Action Tracker"));
-  if (actionSection) {
-    const t = actionSection.querySelector("table.data-table");
-    if (t) {
-      const rows = Array.from(t.querySelectorAll("tbody tr"));
-      actions = rows.map(tr => Array.from(tr.querySelectorAll("td")).slice(1).map(td => td.querySelector("input")?.value || ""));
-    }
-  }
-
-  const wrong = getTextareaByLabel("What Went Wrong");
-  const right = getTextareaByLabel("What Went Right");
-  const sop = getTextareaByLabel("SOP Updates Needed");
-
-  const signoff = getSignOff();
-
-  const fileDate = new Date().toISOString().slice(0,10);
-  const safeRef = (incidentRef || "RCA").replace(/[^a-zA-Z0-9_-]/g, "_");
-  const filename = `RCA_${safeRef}_${fileDate}.xls`;
-
-  // --- Sheet 1: Incident ---
-  const sheet1 = {
-    name: "Page1_Incident",
-    columns: [220, 520],
-    rows: [
-      [{v:"Root Cause Analysis Report (RCA) — MLG", style:"Title", mergeAcross:1}],
-      [{v:"Incident Information | معلومات الحادثة", style:"SectionHeader", mergeAcross:1}],
-      [{v:"Incident Ref No. / رقم مرجع الحادثة", style:"Label"}, {v:incidentRef, style:"Value"}],
-      [{v:"Date of Incident / تاريخ الحادثة", style:"Label"}, {v:dateIncident, style:"Value"}],
-      [{v:"Machine ID / رقم الجهاز", style:"Label"}, {v:machineId, style:"Value"}],
-      [{v:"Location / Site / الموقع", style:"Label"}, {v:location, style:"Value"}],
-      [{v:"Project Name / اسم المشروع", style:"Label"}, {v:projectName, style:"Value"}],
-      [{v:"Report Prepared By / أعد التقرير بواسطة", style:"Label"}, {v:preparedBy, style:"Value"}],
-      [{v:"Date Reported / تاريخ الإبلاغ", style:"Label"}, {v:dateReported, style:"Value"}],
-      [{v:"Severity / الخطورة", style:"Label"}, {v:severity, style:"Value"}],
-      [{v:"Project Manager / مدير المشروع", style:"Label"}, {v:pm, style:"Value"}],
-      [{v:"Field Engineer / مهندس الموقع", style:"Label"}, {v:fe, style:"Value"}],
-      [{v:"Support Manager / مدير الدعم", style:"Label"}, {v:sm, style:"Value"}],
-      [{v:"Client Contact / جهة اتصال العميل", style:"Label"}, {v:client, style:"Value"}],
-      [{v:"Incident Description | وصف الحادثة", style:"SectionHeader", mergeAcross:1}],
-      [{v:"Detailed Report / التقرير التفصيلي", style:"Label"}, {v:detailed, style:"Value"}],
-      [{v:"Impact on Operations / التأثير على العمليات", style:"Label"}, {v:impact, style:"Value"}],
-      [{v:"Affected Components / المكونات المتأثرة", style:"Label"}, {v:affected, style:"Value"}],
-      [{v:"Document: MLG-SOP-RCA-001 | Version: 1.3", style:"SmallGray", mergeAcross:1}],
-    ]
-  };
-
-  // --- Sheet 2: Analysis ---
-  const partsHeader = [
-    {v:"#", style:"TableHeader"},
-    {v:"Part Name", style:"TableHeader"},
-    {v:"Old Part S/N", style:"TableHeader"},
-    {v:"New Part S/N", style:"TableHeader"},
-    {v:"Machine ID", style:"TableHeader"},
-    {v:"Location", style:"TableHeader"},
-    {v:"Reason", style:"TableHeader"},
-  ];
-  const partsRows = (parts || []).map((r, i) => ([
-    {v:String(i+1), style:"Cell"},
-    {v:r[0]||"", style:"Cell"},
-    {v:r[1]||"", style:"Cell"},
-    {v:r[2]||"", style:"Cell"},
-    {v:r[3]||"", style:"Cell"},
-    {v:r[4]||"", style:"Cell"},
-    {v:r[5]||"", style:"Cell"},
-  ]));
-
-  const timelineHeader = [
-    {v:"#", style:"TableHeader"},
-    {v:"Date", style:"TableHeader"},
-    {v:"Time", style:"TableHeader"},
-    {v:"Event / Action", style:"TableHeader"},
-    {v:"By Whom", style:"TableHeader"},
-  ];
-  const timelineRowsBuilt = (timelineRows || []).map((r, i) => ([
-    {v:String(i+1), style:"Cell"},
-    {v:r[0]||"", style:"Cell"},
-    {v:r[1]||"", style:"Cell"},
-    {v:r[2]||"", style:"Cell"},
-    {v:r[3]||"", style:"Cell"},
-  ]));
-
-  const whyLabels = ["Problem","Why 1","Why 2","Why 3","Why 4","Why 5","Root Cause"];
-  const whyTableHeader = [
-    {v:"Item", style:"TableHeader"},
-    {v:"Answer", style:"TableHeader", mergeAcross:5},
-    {v:"", style:"TableHeader"},
-    {v:"", style:"TableHeader"},
-    {v:"", style:"TableHeader"},
-    {v:"", style:"TableHeader"},
-    {v:"", style:"TableHeader"},
-  ];
-  const whyRows = whyLabels.map((lbl, i) => ([
-    {v:lbl, style:"Cell"},
-    {v:(whys[i]||""), style:"Cell", mergeAcross:5},
-    {v:"", style:"Cell"},
-    {v:"", style:"Cell"},
-    {v:"", style:"Cell"},
-    {v:"", style:"Cell"},
-    {v:"", style:"Cell"},
-  ]));
-
-  const contribHeader = [
-    {v:"Category", style:"TableHeader"},
-    {v:"Factor Identified", style:"TableHeader"},
-    {v:"Details / Evidence", style:"TableHeader"},
-  ];
-  const contribRows = (contrib || []).map(r => ([
-    {v:r[0]||"", style:"Cell"},
-    {v:r[1]||"", style:"Cell"},
-    {v:r[2]||"", style:"Cell"},
-  ]));
-
-  const sheet2 = {
-    name: "Page2_Analysis",
-    columns: [40, 170, 120, 120, 110, 140, 240],
-    rows: [
-      [{v:"RCA Analysis — Parts / Timeline / Five Whys / Contributing Factors", style:"Title", mergeAcross:6}],
-      [{v:"Parts Replacement Log | سجل استبدال القطع", style:"SectionHeader", mergeAcross:6}],
-      partsHeader,
-      ...partsRows,
-      [{v:"", style:"SmallGray", mergeAcross:6}],
-      [{v:"Timeline of Events | التسلسل الزمني", style:"SectionHeader", mergeAcross:6}],
-      timelineHeader,
-      ...timelineRowsBuilt,
-      [{v:"", style:"SmallGray", mergeAcross:6}],
-      [{v:"Root Cause Analysis (Five Whys) | تحليل السبب الجذري", style:"SectionHeader", mergeAcross:6}],
-      whyTableHeader,
-      ...whyRows,
-      [{v:"", style:"SmallGray", mergeAcross:6}],
-      [{v:"Contributing Factors | العوامل المساهمة", style:"SectionHeader", mergeAcross:6}],
-      // Contrib table uses first 3 columns, we pad remaining for consistent columns
-      [
-        {v:"Category", style:"TableHeader"},
-        {v:"Factor Identified", style:"TableHeader"},
-        {v:"Details / Evidence", style:"TableHeader"},
-        {v:"", style:"TableHeader"},
-        {v:"", style:"TableHeader"},
-        {v:"", style:"TableHeader"},
-        {v:"", style:"TableHeader"},
-      ],
-      ...(contribRows.map(r => ([
-        r[0], r[1], r[2],
-        {v:"", style:"Cell"},
-        {v:"", style:"Cell"},
-        {v:"", style:"Cell"},
-        {v:"", style:"Cell"},
-      ])))
-    ]
-  };
-
-  // --- Sheet 3: Actions & Sign-off ---
-  const actionHeader = [
-    {v:"#", style:"TableHeader"},
-    {v:"Action Item", style:"TableHeader"},
-    {v:"Assigned To", style:"TableHeader"},
-    {v:"Due Date", style:"TableHeader"},
-    {v:"Priority", style:"TableHeader"},
-    {v:"Status", style:"TableHeader"},
-  ];
-  const actionRowsBuilt = (actions || []).map((r, i) => ([
-    {v:String(i+1), style:"Cell"},
-    {v:r[0]||"", style:"Cell"},
-    {v:r[1]||"", style:"Cell"},
-    {v:r[2]||"", style:"Cell"},
-    {v:r[3]||"", style:"Cell"},
-    {v:r[4]||"", style:"Cell"},
-  ]));
-
-  const signHeader = [
-    {v:"Role", style:"TableHeader"},
-    {v:"Name", style:"TableHeader"},
-    {v:"Signature", style:"TableHeader"},
-    {v:"Date", style:"TableHeader"},
-  ];
-  const signRows = (signoff || []).map(r => ([
-    {v:r[0]||"", style:"Cell"},
-    {v:r[1]||"", style:"Cell"},
-    {v:r[2]||"", style:"Cell"},
-    {v:r[3]||"", style:"Cell"},
-  ]));
-
-  const sheet3 = {
-    name: "Page3_Actions",
-    columns: [70, 360, 160, 120, 90, 110],
-    rows: [
-      [{v:"RCA Actions & Sign-Off — Recommendations / Tracker / Lessons / Approvals", style:"Title", mergeAcross:5}],
-      [{v:"Recommendations — Immediate Corrective Actions", style:"SectionHeader", mergeAcross:5}],
-      [{v:"Selected Actions", style:"Label"}, {v:(recImmediate.selected.join("; ") || ""), style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
-      [{v:"Other", style:"Label"}, {v:(recImmediate.other || ""), style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
-      [{v:"Recommendations — Preventive Actions", style:"SectionHeader", mergeAcross:5}],
-      [{v:"Selected Actions", style:"Label"}, {v:(recPrevent.selected.join("; ") || ""), style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
-      [{v:"Other", style:"Label"}, {v:(recPrevent.other || ""), style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
-      [{v:"", style:"SmallGray", mergeAcross:5}],
-      [{v:"Action Tracker | متابعة الإجراءات", style:"SectionHeader", mergeAcross:5}],
-      actionHeader,
-      ...actionRowsBuilt,
-      [{v:"", style:"SmallGray", mergeAcross:5}],
-      [{v:"Lessons Learned | الدروس المستفادة", style:"SectionHeader", mergeAcross:5}],
-      [{v:"What Went Wrong", style:"Label"}, {v:wrong, style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
-      [{v:"What Went Right", style:"Label"}, {v:right, style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
-      [{v:"SOP Updates Needed", style:"Label"}, {v:sop, style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
-      [{v:"", style:"SmallGray", mergeAcross:5}],
-      [{v:"Review & Sign-Off | المراجعة والتوقيع", style:"SectionHeader", mergeAcross:5}],
-      [
-        {v:"Role", style:"TableHeader"},
-        {v:"Name", style:"TableHeader"},
-        {v:"Signature", style:"TableHeader"},
-        {v:"Date", style:"TableHeader"},
-        {v:"", style:"TableHeader"},
-        {v:"", style:"TableHeader"},
-      ],
-      ...(signRows.map(r => ([
-        r[0],
-        r[1],
-        r[2],
-        r[3],
-        {v:"", style:"Cell"},
-        {v:"", style:"Cell"},
-      ]))),
-      [{v:"Document: MLG-SOP-RCA-001 | Version: 1.3 | Exported: " + new Date().toLocaleString(), style:"SmallGray", mergeAcross:5}],
-    ]
-  };
-
-  // Build workbook XML
-  const xml = makeSpreadsheetML("MLG RCA Report", [sheet1, sheet2, sheet3]);
-
-  const blob = new Blob([xml], { type: "application/vnd.ms-excel" });
+  const filename = (incidentRef ? `RCA_${incidentRef}` : `RCA_${new Date().toISOString().slice(0,10)}`) + ".xls";
+  const blob = new Blob([workbook], { type: "application/vnd.ms-excel" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = filename;
   a.click();
   URL.revokeObjectURL(a.href);
-  setStatus("Excel exported.", true);
+  alert("Excel exported successfully!\nتم تصدير الإكسل بنجاح!");
 }
 
-
-
-/* ---------- Actions ---------- */
-function clearAll() {
-  if (confirm('Are you sure you want to clear all fields?\nهل أنت متأكد من مسح جميع الحقول؟')) {
-    document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = '');
-    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
-    setStatus("Cleared.", true);
-    scheduleAutosave();
-  }
-}
-
-function fileNameFromRef() {
-  const refInput = document.querySelector('input[placeholder="RCA-XXXX-XXX"]');
-  const ref = (refInput && refInput.value) ? refInput.value.trim() : "";
-  const d = new Date().toISOString().slice(0,10);
-  const safeRef = ref ? ref.replace(/[^a-zA-Z0-9_-]/g, "_") : "RCA";
-  return `RCA_Draft_${safeRef}_${d}.json`;
-}
-
-function downloadJson(obj, filename) {
-  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
-
-function saveAsDraftFile() {
-  const data = collectData();
-  downloadJson(data, fileNameFromRef());
-  setStatus("Draft saved to file.", true);
-}
-
-function loadDraftFile() {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".json,application/json";
-  input.onchange = function(e) {
-    const f = e.target.files && e.target.files[0];
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-      try {
-        const data = JSON.parse(ev.target.result);
-        applyData(data);
-        setStatus("Draft loaded from file.", true);
-        scheduleAutosave();
-      } catch (err) {
-        alert("Error loading draft / خطأ في تحميل المسودة");
-      }
-    };
-    reader.readAsText(f);
-  };
-  input.click();
-}
-
-function saveToBrowser() {
-  const data = collectData();
-  localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
-  setStatus("Saved to browser.", true);
-}
-
-function loadFromBrowser() {
-  const raw = localStorage.getItem(AUTOSAVE_KEY);
-  if (!raw) {
-    alert("No browser draft found / لا توجد مسودة محفوظة في المتصفح");
-    return;
-  }
-  try {
-    const data = JSON.parse(raw);
-    applyData(data);
-    setStatus("Loaded from browser.", true);
-    scheduleAutosave();
-  } catch (e) {
-    alert("Browser draft corrupted / مسودة المتصفح تالفة");
-  }
-}
-
-function clearBrowserDraft() {
-  if (confirm("Remove the saved browser draft?\nهل تريد حذف مسودة المتصفح؟")) {
-    localStorage.removeItem(AUTOSAVE_KEY);
-    setStatus("Browser draft cleared.", true);
-  }
-}
-
-/* ---------- Autosave ---------- */
-let autosaveTimer = null;
-
-function setStatus(msg, flash=false) {
-  const el = document.getElementById("autosaveStatus");
-  if (!el) return;
-  el.textContent = msg ? `✅ ${msg}` : "";
-  if (flash) {
-    el.style.opacity = "1";
-    setTimeout(() => { el.style.opacity = "0.9"; }, 1200);
-  }
-}
-
-function scheduleAutosave() {
-  if (autosaveTimer) clearTimeout(autosaveTimer);
-  autosaveTimer = setTimeout(() => {
-    try {
-      const data = collectData();
-      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
-      setStatus("Autosaved " + new Date().toLocaleTimeString(), true);
-    } catch (e) {}
-  }, 700);
-}
-
+/* ---------- Init ---------- */
 document.addEventListener("DOMContentLoaded", () => {
+  fillMOJDatalists();
+
+  const loc = document.getElementById("locationInput");
+  const mid = document.getElementById("machineIdInput");
+  if (loc) {
+    loc.addEventListener("change", syncFromLocation);
+    loc.addEventListener("input", syncFromLocation);
+  }
+  if (mid) {
+    mid.addEventListener("change", syncFromMachineId);
+    mid.addEventListener("input", syncFromMachineId);
+  }
+
   // Restore wizard page
   try {
     const savedPage = parseInt(sessionStorage.getItem("MLG_RCA_CURRENT_PAGE") || "1", 10);
     setActivePage(savedPage, false);
   } catch(e) { setActivePage(1, false); }
 
-const raw = localStorage.getItem(AUTOSAVE_KEY);
-  if (raw) {
-    try {
-      const data = JSON.parse(raw);
-      const anyFilled = Array.from(document.querySelectorAll('input[type="text"], input[type="date"], textarea'))
-        .some(el => (el.value || "").trim() !== "");
-      const anyChecked = Array.from(document.querySelectorAll('input[type="checkbox"], input[type="radio"]'))
-        .some(el => el.checked);
-      if (!anyFilled && !anyChecked) applyData(data);
-      setStatus("Autosave ready.", false);
-    } catch(e) {}
-  } else {
-    setStatus("Autosave ready.", false);
-  }
-
-  document.addEventListener("input", (e) => {
-    const t = e.target;
-    if (t && t.matches("input, textarea, select")) scheduleAutosave();
-  });
-  document.addEventListener("change", (e) => {
-    const t = e.target;
-    if (t && t.matches('input[type="checkbox"], input[type="radio"], select')) scheduleAutosave();
-  });
+  if (loc && loc.value) syncFromLocation();
+  if (mid && mid.value) syncFromMachineId();
 });
 </script>
 </body>
