@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Multi Level Group - Field Support Operations">
+<meta name="description" content="Root Cause Analysis Report Template - MLG Field Support SOP">
+<meta name="version" content="1.1">
+<meta name="department" content="MLG Field Support & Hardware Operations">
+<title>RCA Report | MLG Field Support SOP | تقرير تحليل السبب الجذري</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap');
+  
+  :root {
+    --primary: #1B3A5C;
+    --accent: #C0392B;
+    --light-bg: #EBF0F5;
+    --border: #D0D5DD;
+    --text: #333;
+    --gray: #666;
+    --input-bg: #F8F9FA;
+    --white: #fff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: 'Inter', 'Cairo', sans-serif;
+    color: var(--text);
+    background: #f0f2f5;
+    padding: 20px;
+    line-height: 1.5;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, #2C5A8C 100%);
+    color: white;
+    padding: 30px 40px;
+    text-align: center;
+  }
+  .header h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+  .header h2 { font-size: 20px; font-weight: 600; font-family: 'Cairo', sans-serif; direction: rtl; margin-bottom: 8px; }
+  .header .subtitle { font-size: 13px; opacity: 0.8; }
+
+  .content { padding: 30px 40px; }
+
+  /* Section */
+  .section { margin-bottom: 28px; }
+  .section-title {
+    background: var(--primary);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px 6px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .section-title .en { font-size: 14px; font-weight: 600; }
+  .section-title .ar { font-size: 14px; font-weight: 600; font-family: 'Cairo', sans-serif; direction: rtl; }
+
+  /* Form Grid */
+  .form-grid {
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    overflow: hidden;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  .form-row:last-child { border-bottom: none; }
+  .form-row.full { grid-template-columns: 1fr; }
+
+  .form-field {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    border-right: 1px solid var(--border);
+  }
+  .form-field:last-child { border-right: none; }
+  .form-row.full .form-field { grid-template-columns: 200px 1fr; border-right: none; }
+
+  .field-label {
+    background: var(--light-bg);
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+  }
+  .field-label .ar { font-family: 'Cairo', sans-serif; direction: rtl; color: var(--gray); font-size: 11px; font-weight: 400; }
+
+  .field-input {
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+  }
+  .field-input input, .field-input textarea, .field-input select {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: 'Inter', 'Cairo', sans-serif;
+    background: var(--input-bg);
+    transition: border-color 0.2s;
+  }
+  .field-input input:focus, .field-input textarea:focus, .field-input select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: white;
+  }
+  .field-input textarea { min-height: 80px; resize: vertical; }
+
+  /* Severity selector */
+  .severity-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .severity-options label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .severity-options label:hover { border-color: var(--primary); }
+  .severity-options input[type="radio"] { accent-color: var(--accent); }
+  .severity-options input[type="radio"]:checked + span { font-weight: 600; }
+  .sev-critical { color: #C0392B; }
+  .sev-high { color: #E67E22; }
+  .sev-medium { color: #F1C40F; }
+  .sev-low { color: #27AE60; }
+
+  /* Sub-section title */
+  .sub-title {
+    background: var(--accent);
+    color: white;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .sub-title .ar { font-family: 'Cairo', sans-serif; }
+
+  /* Timeline table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table th {
+    background: var(--primary);
+    color: white;
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .data-table th .ar {
+    display: block;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 400;
+    font-size: 11px;
+    direction: rtl;
+    opacity: 0.8;
+  }
+  .data-table td {
+    padding: 4px 6px;
+    border: 1px solid var(--border);
+  }
+  .data-table td input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 6px 4px;
+    font-size: 13px;
+    font-family: 'Inter', 'Cairo', sans-serif;
+  }
+  .data-table td input:focus { outline: none; background: #fffde7; }
+  .data-table .row-num {
+    width: 40px;
+    text-align: center;
+    background: var(--light-bg);
+    font-weight: 600;
+    color: var(--gray);
+  }
+
+  /* Five Whys */
+  .why-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+  .why-row:last-child { border-bottom: none; }
+  .why-label {
+    background: var(--light-bg);
+    padding: 12px 14px;
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+  }
+  .why-label .ar { font-family: 'Cairo', sans-serif; font-size: 11px; color: var(--gray); font-weight: 400; direction: rtl; }
+  .why-label.root {
+    background: var(--accent);
+    color: white;
+  }
+  .why-label.root .ar { color: rgba(255,255,255,0.8); }
+  .why-label.problem {
+    background: var(--primary);
+    color: white;
+  }
+  .why-label.problem .ar { color: rgba(255,255,255,0.8); }
+  .why-input { padding: 6px 10px; display: flex; align-items: center; }
+  .why-input input {
+    width: 100%;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 13px;
+    font-family: 'Inter', 'Cairo', sans-serif;
+    background: var(--input-bg);
+  }
+  .why-input input:focus { outline: none; border-color: var(--primary); background: white; }
+
+  /* Checkbox recommendations */
+  .checkbox-group {
+    padding: 14px;
+  }
+  .checkbox-group label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 13px;
+  }
+  .checkbox-group label:hover { background: var(--light-bg); }
+  .checkbox-group input[type="checkbox"] {
+    accent-color: var(--accent);
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+  .checkbox-group .label-text { display: flex; flex-direction: column; }
+  .checkbox-group .label-text .ar { font-family: 'Cairo', sans-serif; direction: rtl; font-size: 12px; color: var(--gray); }
+  .checkbox-group .other-input {
+    margin-top: 6px;
+    margin-left: 26px;
+    width: calc(100% - 26px);
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: 'Inter', 'Cairo', sans-serif;
+    background: var(--input-bg);
+  }
+
+  /* Parts replacement */
+  .parts-table th { font-size: 11px; }
+
+  /* Sign-off */
+  .sign-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 120px 120px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sign-row:last-child { border-bottom: none; }
+  .sign-cell {
+    padding: 10px 12px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+  }
+  .sign-cell:last-child { border-right: none; }
+  .sign-cell.label-cell {
+    background: var(--light-bg);
+    font-weight: 600;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .sign-cell.label-cell .ar { font-family: 'Cairo', sans-serif; font-size: 11px; color: var(--gray); font-weight: 400; direction: rtl; }
+  .sign-cell input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 4px;
+    font-size: 13px;
+    font-family: 'Inter', 'Cairo', sans-serif;
+  }
+  .sign-cell input:focus { outline: none; background: #fffde7; }
+
+  /* Print */
+  .btn-bar {
+    padding: 20px 40px;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: #244d73; }
+  .btn-accent { background: var(--accent); color: white; }
+  .btn-accent:hover { background: #a93226; }
+
+  
+  /* Print Enhancements (v1.1) */
+  @page { size: A4; margin: 12mm; }
+  .section { break-inside: avoid; page-break-inside: avoid; }
+  table { break-inside: auto; }
+  tr { break-inside: avoid; page-break-inside: avoid; }
+
+
+  @media print {
+    body { background: white; padding: 0; }
+    .container { box-shadow: none; border-radius: 0; }
+    .btn-bar { display: none; }
+    .field-input input, .field-input textarea, .field-input select,
+    .why-input input, .data-table td input, .sign-cell input, .checkbox-group .other-input {
+      border: none !important;
+      background: transparent !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .form-row { grid-template-columns: 1fr; }
+    .form-field { grid-template-columns: 140px 1fr; }
+    .sign-row { grid-template-columns: 1fr 1fr; }
+    .content { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <h1>Root Cause Analysis Report</h1>
+    <h2>تقرير تحليل السبب الجذري</h2>
+    <div class="subtitle">MLG Field Support SOP — Document Version 1.1 | إجراء التشغيل القياسي للدعم الميداني</div>
+  </div>
+
+  <div class="content">
+
+    <!-- 1. INCIDENT INFORMATION -->
+    <div class="section">
+      <div class="section-title">
+        <span class="en">1. Incident Information</span>
+        <span class="ar">١. معلومات الحادثة</span>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <div class="form-field">
+            <div class="field-label">Incident Ref No.<div class="ar">رقم مرجع الحادثة</div></div>
+            <div class="field-input"><input type="text" placeholder="RCA-XXXX-XXX"></div>
+          </div>
+          <div class="form-field">
+            <div class="field-label">Date of Incident<div class="ar">تاريخ الحادثة</div></div>
+            <div class="field-input"><input type="date"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="field-label">Machine ID<div class="ar">رقم تعريف الجهاز</div></div>
+            <div class="field-input"><input type="text" placeholder="e.g. MOJ-18"></div>
+          </div>
+          <div class="form-field">
+            <div class="field-label">Location / Site<div class="ar">الموقع / المحكمة</div></div>
+            <div class="field-input"><input type="text" placeholder="e.g. Minya Court"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="field-label">Project Name<div class="ar">اسم المشروع</div></div>
+            <div class="field-input"><input type="text"></div>
+          </div>
+          <div class="form-field">
+            <div class="field-label">Report Prepared By<div class="ar">أعد التقرير بواسطة</div></div>
+            <div class="field-input"><input type="text"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="field-label">Date Reported<div class="ar">تاريخ الإبلاغ</div></div>
+            <div class="field-input"><input type="date"></div>
+          </div>
+          <div class="form-field">
+            <div class="field-label">Severity Level<div class="ar">مستوى الخطورة</div></div>
+            <div class="field-input">
+              <div class="severity-options">
+                <label><input type="radio" name="severity" value="critical"><span class="sev-critical">Critical / حرج</span></label>
+                <label><input type="radio" name="severity" value="high"><span class="sev-high">High / مرتفع</span></label>
+                <label><input type="radio" name="severity" value="medium"><span class="sev-medium">Medium / متوسط</span></label>
+                <label><input type="radio" name="severity" value="low"><span class="sev-low">Low / منخفض</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="field-label">Project Manager<div class="ar">مدير المشروع</div></div>
+            <div class="field-input"><input type="text"></div>
+          </div>
+          <div class="form-field">
+            <div class="field-label">Field Engineer<div class="ar">مهندس الموقع</div></div>
+            <div class="field-input"><input type="text"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <div class="field-label">Support Manager<div class="ar">مدير الدعم</div></div>
+            <div class="field-input"><input type="text"></div>
+          </div>
+          <div class="form-field">
+            <div class="field-label">Client Contact<div class="ar">جهة الاتصال بالعميل</div></div>
+            <div class="field-input"><input type="text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. INCIDENT DESCRIPTION -->
+    <div class="section">
+      <div class="section-title">
+        <span class="en">2. Incident Description</span>
+        <span class="ar">٢. وصف الحادثة</span>
+      </div>
+      <div class="form-grid">
+        <div class="form-row full">
+          <div class="form-field">
+            <div class="field-label">Detailed Report<div class="ar">التقرير التفصيلي</div></div>
+            <div class="field-input"><textarea placeholder="Provide a detailed description of the incident, including what happened, when, and how it was discovered...&#10;يرجى تقديم وصف تفصيلي للحادثة ..." rows="5"></textarea></div>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-field">
+            <div class="field-label">Impact on Operations<div class="ar">التأثير على العمليات</div></div>
+            <div class="field-input"><textarea placeholder="Downtime, data loss, service disruption...&#10;وقت التوقف، فقدان البيانات..." rows="3"></textarea></div>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-field">
+            <div class="field-label">Affected Components<div class="ar">المكونات المتأثرة</div></div>
+            <div class="field-input"><textarea placeholder="Hardware, software, printer, SSD, network...&#10;الأجهزة، البرمجيات، الطابعة..." rows="2"></textarea></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. PARTS REPLACEMENT LOG -->
+    <div class="section">
+      <div class="section-title">
+        <span class="en">3. Parts Replacement Log</span>
+        <span class="ar">٣. سجل استبدال القطع</span>
+      </div>
+      <div class="form-grid">
+        <table class="data-table parts-table">
+          <thead>
+            <tr>
+              <th style="width:40px">#</th>
+              <th>Part Name<span class="ar">اسم القطعة</span></th>
+              <th>Old Part S/N<span class="ar">رقم القطعة القديمة</span></th>
+              <th>New Part S/N<span class="ar">رقم القطعة الجديدة</span></th>
+              <th>Machine ID<span class="ar">رقم الجهاز</span></th>
+              <th>Location<span class="ar">الموقع</span></th>
+              <th>Reason<span class="ar">السبب</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-num">1</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td class="row-num">2</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td class="row-num">3</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td class="row-num">4</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 4. TIMELINE -->
+    <div class="section">
+      <div class="section-title">
+        <span class="en">4. Timeline of Events</span>
+        <span class="ar">٤. التسلسل الزمني للأحداث</span>
+      </div>
+      <div class="form-grid">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:40px">#</th>
+              <th style="width:120px">Date<span class="ar">التاريخ</span></th>
+              <th style="width:100px">Time<span class="ar">الوقت</span></th>
+              <th>Event / Action<span class="ar">الحدث / الإجراء</span></th>
+              <th style="width:140px">By Whom<span class="ar">بواسطة</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-num">1</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td class="row-num">2</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td class="row-num">3</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td class="row-num">4</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td class="row-num">5</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td class="row-num">6</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 5. ROOT CAUSE ANALYSIS -->
+    <div class="section">
+      <div class="section-title">
+        <span class="en">5. Root Cause Analysis (Five Whys)</span>
+        <span class="ar">٥. تحليل السبب الجذري (الأسباب الخمسة)</span>
+      </div>
+      <div class="form-grid">
+        <div class="why-row">
+          <div class="why-label problem">Problem<div class="ar">المشكلة</div></div>
+          <div class="why-input"><input type="text" placeholder="What happened? / ماذا حدث؟"></div>
+        </div>
+        <div class="why-row">
+          <div class="why-label">Why 1<div class="ar">لماذا ١</div></div>
+          <div class="why-input"><input type="text" placeholder="Why did the problem occur? / لماذا حدثت المشكلة؟"></div>
+        </div>
+        <div class="why-row">
+          <div class="why-label">Why 2<div class="ar">لماذا ٢</div></div>
+          <div class="why-input"><input type="text" placeholder="Why did the above happen? / لماذا حدث ما سبق؟"></div>
+        </div>
+        <div class="why-row">
+          <div class="why-label">Why 3<div class="ar">لماذا ٣</div></div>
+          <div class="why-input"><input type="text" placeholder="Why did the above happen?"></div>
+        </div>
+        <div class="why-row">
+          <div class="why-label">Why 4<div class="ar">لماذا ٤</div></div>
+          <div class="why-input"><input type="text" placeholder="Why did the above happen?"></div>
+        </div>
+        <div class="why-row">
+          <div class="why-label">Why 5<div class="ar">لماذا ٥</div></div>
+          <div class="why-input"><input type="text" placeholder="Why did the above happen?"></div>
+        </div>
+        <div class="why-row">
+          <div class="why-label root">Root Cause<div class="ar">السبب الجذري</div></div>
+          <div class="why-input"><input type="text" placeholder="Identified root cause / السبب الجذري المحدد" style="border-color: #C0392B;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. CONTRIBUTING FACTORS -->
+    <div class="section">
+      <div class="section-title">
+        <span class="en">6. Contributing Factors</span>
+        <span class="ar">٦. العوامل المساهمة</span>
+      </div>
+      <div class="form-grid">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Category<span class="ar">الفئة</span></th>
+              <th>Factor Identified<span class="ar">العامل المحدد</span></th>
+              <th>Details / Evidence<span class="ar">التفاصيل / الأدلة</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="background:var(--light-bg);font-weight:600;padding:10px 12px;font-size:12px">Human Factor<br><span style="color:#666;font-weight:400;font-family:Cairo">العامل البشري</span></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td style="background:var(--light-bg);font-weight:600;padding:10px 12px;font-size:12px">Process / Procedure<br><span style="color:#666;font-weight:400;font-family:Cairo">العملية / الإجراء</span></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td style="background:var(--light-bg);font-weight:600;padding:10px 12px;font-size:12px">Equipment / Hardware<br><span style="color:#666;font-weight:400;font-family:Cairo">المعدات / الأجهزة</span></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td style="background:var(--light-bg);font-weight:600;padding:10px 12px;font-size:12px">Software / Config<br><span style="color:#666;font-weight:400;font-family:Cairo">البرمجيات / الإعداد</span></td><td><input type="text"></td><td><input type="text"></td></tr>
+            <tr><td style="background:var(--light-bg);font-weight:600;padding:10px 12px;font-size:12px">Communication Gap<br><span style="color:#666;font-weight:400;font-family:Cairo">فجوة التواصل</span></td><td><input type="text"></td><td><input type="text"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 7. RECOMMENDATIONS (TICK BOXES) -->
+    <div class="section">
+      <div class="section-title">
+        <span class="en">7. Recommendations & Next Actions</span>
+        <span class="ar">٧. التوصيات والإجراءات التالية</span>
+      </div>
+      <div class="form-grid">
+        <div class="sub-title">
+          <span>Immediate Corrective Actions | الإجراءات التصحيحية الفورية</span>
+        </div>
+        <div class="checkbox-group">
+          <label><input type="checkbox"><span class="label-text">Replace faulty hardware component<span class="ar">استبدال مكون الأجهزة المعيب</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Reinstall / update operating system and drivers<span class="ar">إعادة تثبيت / تحديث نظام التشغيل والتعريفات</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Reconfigure device settings<span class="ar">إعادة تهيئة إعدادات الجهاز</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Restore data from backup<span class="ar">استعادة البيانات من النسخ الاحتياطي</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Perform full system diagnostic<span class="ar">إجراء تشخيص كامل للنظام</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Reconnect / restore power supply<span class="ar">إعادة توصيل / استعادة مصدر الطاقة</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Escalate to senior technical team<span class="ar">تصعيد إلى الفريق الفني الأقدم</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Coordinate with client for site access<span class="ar">التنسيق مع العميل للوصول إلى الموقع</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Other (specify below):<span class="ar">أخرى (حدد أدناه):</span></span></label>
+          <input type="text" class="other-input" placeholder="Specify other immediate action / حدد إجراء فوري آخر">
+        </div>
+
+        <div class="sub-title">
+          <span>Preventive Actions | الإجراءات الوقائية</span>
+        </div>
+        <div class="checkbox-group">
+          <label><input type="checkbox"><span class="label-text">Implement scheduled backup policy<span class="ar">تطبيق سياسة نسخ احتياطي مجدولة</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Update SOP / maintenance checklist<span class="ar">تحديث إجراء التشغيل القياسي / قائمة الصيانة</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Conduct training for field engineers<span class="ar">إجراء تدريب لمهندسي الموقع</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Install UPS / power protection<span class="ar">تركيب وحدة طاقة غير منقطعة / حماية كهربائية</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Implement pre-deployment checklist<span class="ar">تطبيق قائمة فحص قبل النشر</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Establish periodic preventive maintenance schedule<span class="ar">وضع جدول صيانة وقائية دورية</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Add monitoring / alerting system<span class="ar">إضافة نظام مراقبة وتنبيه</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Review and improve communication protocol<span class="ar">مراجعة وتحسين بروتوكول التواصل</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Require sign-off before hardware shipping<span class="ar">اشتراط الموافقة قبل شحن الأجهزة</span></span></label>
+          <label><input type="checkbox"><span class="label-text">Other (specify below):<span class="ar">أخرى (حدد أدناه):</span></span></label>
+          <input type="text" class="other-input" placeholder="Specify other preventive action / حدد إجراء وقائي آخر">
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. CORRECTIVE ACTION TRACKER -->
+    <div class="section">
+      <div class="section-title">
+        <span class="en">8. Action Tracker</span>
+        <span class="ar">٨. متابعة الإجراءات</span>
+      </div>
+      <div class="form-grid">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:35px">#</th>
+              <th>Action Item<span class="ar">الإجراء</span></th>
+              <th style="width:130px">Assigned To<span class="ar">مسند إلى</span></th>
+              <th style="width:110px">Due Date<span class="ar">تاريخ الاستحقاق</span></th>
+              <th style="width:80px">Priority<span class="ar">الأولوية</span></th>
+              <th style="width:90px">Status<span class="ar">الحالة</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="row-num">1</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text" placeholder="H/M/L"></td><td><input type="text" placeholder="Open"></td></tr>
+            <tr><td class="row-num">2</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text" placeholder="H/M/L"></td><td><input type="text" placeholder="Open"></td></tr>
+            <tr><td class="row-num">3</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text" placeholder="H/M/L"></td><td><input type="text" placeholder="Open"></td></tr>
+            <tr><td class="row-num">4</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text" placeholder="H/M/L"></td><td><input type="text" placeholder="Open"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 9. LESSONS LEARNED -->
+    <div class="section">
+      <div class="section-title">
+        <span class="en">9. Lessons Learned</span>
+        <span class="ar">٩. الدروس المستفادة</span>
+      </div>
+      <div class="form-grid">
+        <div class="form-row full">
+          <div class="form-field">
+            <div class="field-label">What Went Wrong<div class="ar">ما الخطأ الذي حدث</div></div>
+            <div class="field-input"><textarea rows="2"></textarea></div>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-field">
+            <div class="field-label">What Went Right<div class="ar">ما الذي سار بشكل صحيح</div></div>
+            <div class="field-input"><textarea rows="2"></textarea></div>
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-field">
+            <div class="field-label">SOP Updates Needed<div class="ar">تحديثات الإجراءات المطلوبة</div></div>
+            <div class="field-input"><textarea rows="2"></textarea></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. SIGN-OFF -->
+    <div class="section">
+      <div class="section-title">
+        <span class="en">10. Review & Sign-Off</span>
+        <span class="ar">١٠. المراجعة والتوقيع</span>
+      </div>
+      <div class="form-grid">
+        <div class="sign-row" style="background:var(--primary);color:white;font-size:12px;font-weight:600;">
+          <div class="sign-cell" style="background:var(--primary);border-color:rgba(255,255,255,0.2);">Role / الدور</div>
+          <div class="sign-cell" style="background:var(--primary);border-color:rgba(255,255,255,0.2);">Name / الاسم</div>
+          <div class="sign-cell" style="background:var(--primary);border-color:rgba(255,255,255,0.2);">Signature / التوقيع</div>
+          <div class="sign-cell" style="background:var(--primary);">Date / التاريخ</div>
+        </div>
+        <div class="sign-row">
+          <div class="sign-cell label-cell">Prepared By<div class="ar">أعد بواسطة</div></div>
+          <div class="sign-cell"><input type="text"></div>
+          <div class="sign-cell"><input type="text"></div>
+          <div class="sign-cell"><input type="text"></div>
+        </div>
+        <div class="sign-row">
+          <div class="sign-cell label-cell">Support Manager<div class="ar">مدير الدعم</div></div>
+          <div class="sign-cell"><input type="text"></div>
+          <div class="sign-cell"><input type="text"></div>
+          <div class="sign-cell"><input type="text"></div>
+        </div>
+        <div class="sign-row">
+          <div class="sign-cell label-cell">Project Manager<div class="ar">مدير المشروع</div></div>
+          <div class="sign-cell"><input type="text"></div>
+          <div class="sign-cell"><input type="text"></div>
+          <div class="sign-cell"><input type="text"></div>
+        </div>
+        <div class="sign-row">
+          <div class="sign-cell label-cell">Head of Delivery<div class="ar">رئيس التسليم</div></div>
+          <div class="sign-cell"><input type="text"></div>
+          <div class="sign-cell"><input type="text"></div>
+          <div class="sign-cell"><input type="text"></div>
+        </div>
+        <div class="sign-row">
+          <div class="sign-cell label-cell">Senior Management<div class="ar">الإدارة العليا</div></div>
+          <div class="sign-cell"><input type="text"></div>
+          <div class="sign-cell"><input type="text"></div>
+          <div class="sign-cell"><input type="text"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENT CONTROL -->
+    <div class="section" style="margin-top: 10px;">
+      <div style="border-top: 1px solid var(--border); padding-top: 12px; font-size: 11px; color: var(--gray); line-height: 1.6;">
+        <strong style="color: var(--primary);">Document Control:</strong> This template is part of the MLG Field Support Standard Operating Procedures (SOP) framework. 
+        All completed RCA reports must be filed in the project repository and shared with relevant stakeholders within 5 working days of the incident.
+        <br>
+        <strong style="color: var(--primary);">التحكم بالوثائق:</strong> هذا النموذج جزء من إطار إجراءات التشغيل القياسية للدعم الميداني في مجموعة ملتي ليفل.
+        <br><br>
+        <span style="font-size: 10px;">
+          Document ID: MLG-SOP-RCA-001 &nbsp;|&nbsp; Version: 1.1 &nbsp;|&nbsp; Department: Field Support & Hardware Operations &nbsp;|&nbsp; 
+          Prepared by: MLG Quality & Compliance &nbsp;|&nbsp; Effective Date: March 2026
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="btn-bar">
+    <button class="btn btn-primary" onclick="window.print()">🖨️ Print / طباعة</button>
+    <button class="btn btn-accent" onclick="clearAll()">🗑️ Clear All / مسح الكل</button>
+
+    <button class="btn" style="background:#27AE60;color:white;" onclick="saveAsDraftFile()">💾 Save Draft (JSON) / حفظ مسودة</button>
+    <button class="btn" style="background:#3498DB;color:white;" onclick="loadDraftFile()">📂 Load Draft (JSON) / تحميل مسودة</button>
+
+    <button class="btn" style="background:#8E44AD;color:white;" onclick="saveToBrowser()">🧠 Save to Browser / حفظ في المتصفح</button>
+    <button class="btn" style="background:#16A085;color:white;" onclick="loadFromBrowser()">↩️ Load from Browser / تحميل من المتصفح</button>
+    <button class="btn" style="background:#7F8C8D;color:white;" onclick="clearBrowserDraft()">🧹 Clear Browser Draft / مسح مسودة المتصفح</button>
+
+    <span id="autosaveStatus" style="margin-left:10px;font-size:12px;color:#444;align-self:center;"></span>
+</div>
+</div>
+
+
+<script>
+/**
+ * MLG RCA Template v1.1 Enhancements
+ * - Stable(ish) field keys (no more numeric-only indexing)
+ * - Autosave to localStorage (latest draft)
+ * - Save/Load Draft as JSON file (portable)
+ * - Save/Load Draft in browser (quick)
+ */
+const TEMPLATE_VERSION = "1.1";
+const AUTOSAVE_KEY = "MLG_RCA_AUTOSAVE_LATEST_V1_1";
+
+/* ---------- Utilities ---------- */
+function normalizeKey(s) {
+  return (s || "")
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, "_")
+    .replace(/[^a-z0-9_]/g, "")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 120);
+}
+
+function getSectionTitle(el) {
+  const section = el.closest(".section");
+  if (!section) return "global";
+  const t = section.querySelector(".section-title .en");
+  return (t && t.textContent) ? t.textContent.trim() : "section";
+}
+
+function getPrimaryLabel(el) {
+  // Normal form fields
+  const formField = el.closest(".form-field");
+  if (formField) {
+    const label = formField.querySelector(".field-label");
+    if (label) {
+      const text = (label.childNodes && label.childNodes[0]) ? label.childNodes[0].textContent : label.textContent;
+      return (text || "").trim();
+    }
+  }
+  // Five Whys
+  const whyRow = el.closest(".why-row");
+  if (whyRow) {
+    const w = whyRow.querySelector(".why-label");
+    const text = (w && w.childNodes && w.childNodes[0]) ? w.childNodes[0].textContent : (w ? w.textContent : "");
+    return (text || "").trim();
+  }
+  // Tables: coordinates
+  const td = el.closest("td");
+  const tr = el.closest("tr");
+  const table = el.closest("table");
+  if (td && tr && table) {
+    const body = table.querySelector("tbody");
+    const rows = body ? Array.from(body.querySelectorAll("tr")) : Array.from(table.querySelectorAll("tr"));
+    const rowIndex = rows.indexOf(tr);
+    const cellIndex = Array.from(tr.children).indexOf(td);
+    const secTitle = (table.closest(".section")?.querySelector(".section-title .en")?.textContent || "");
+    const tableHint =
+      table.classList.contains("parts-table") ? "parts" :
+      (secTitle.includes("Timeline") ? "timeline" :
+      (secTitle.includes("Action Tracker") ? "actions" :
+      (secTitle.includes("Contributing") ? "contrib" : "table")));
+    return `${tableHint}_r${rowIndex}_c${cellIndex}`;
+  }
+  return el.getAttribute("placeholder") || el.getAttribute("aria-label") || el.id || el.name || "field";
+}
+
+function fieldKey(el) {
+  if (el.name) return normalizeKey("n_" + el.name);
+  if (el.id) return normalizeKey("id_" + el.id);
+  const sec = getSectionTitle(el);
+  const lab = getPrimaryLabel(el);
+  const type = el.type || el.tagName;
+  return normalizeKey(`${sec}__${lab}__${type}`);
+}
+
+function getAllFields() {
+  return Array.from(document.querySelectorAll("input, textarea, select"))
+    .filter(el => {
+      if (el.closest(".btn-bar")) return false;
+      if (el.type === "button" || el.type === "submit" || el.type === "reset" || el.tagName === "BUTTON") return false;
+      return true;
+    });
+}
+
+/* ---------- Data Model ---------- */
+function collectData() {
+  const data = {
+    meta: {
+      template: "MLG-SOP-RCA-001",
+      template_version: TEMPLATE_VERSION,
+      saved_at: new Date().toISOString()
+    },
+    fields: {},
+    checks: {},
+    radios: {}
+  };
+
+  const fields = getAllFields();
+  fields.forEach(el => {
+    const k = fieldKey(el);
+
+    if (el.type === "checkbox") {
+      data.checks[k] = !!el.checked;
+      return;
+    }
+    if (el.type === "radio") {
+      if (el.checked) data.radios[el.name || k] = el.value;
+      return;
+    }
+
+    const v = (el.value ?? "").toString();
+    if (v.trim() !== "") data.fields[k] = v;
+  });
+
+  return data;
+}
+
+function applyData(data) {
+  if (!data) return;
+
+  const fields = getAllFields();
+  const hasNewModel = !!data.fields || !!data.checks || !!data.radios;
+  const flat = (!hasNewModel && typeof data === "object") ? data : null;
+
+  fields.forEach(el => {
+    const k = fieldKey(el);
+
+    if (el.type === "checkbox") {
+      if (hasNewModel && data.checks && k in data.checks) el.checked = !!data.checks[k];
+      else if (flat && k in flat) el.checked = !!flat[k];
+      return;
+    }
+    if (el.type === "radio") {
+      const groupKey = el.name || k;
+      const wanted = hasNewModel ? (data.radios ? data.radios[groupKey] : null) : (flat ? flat[groupKey] : null);
+      if (wanted != null && el.value === wanted) el.checked = true;
+      return;
+    }
+
+    const wanted = hasNewModel ? (data.fields ? data.fields[k] : null) : (flat ? flat[k] : null);
+    if (wanted != null) el.value = wanted;
+  });
+}
+
+/* ---------- Actions ---------- */
+function clearAll() {
+  if (confirm('Are you sure you want to clear all fields?\nهل أنت متأكد من مسح جميع الحقول؟')) {
+    document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = '');
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
+    setStatus("Cleared.", true);
+    scheduleAutosave();
+  }
+}
+
+function fileNameFromRef() {
+  const refInput = document.querySelector('input[placeholder="RCA-XXXX-XXX"]');
+  const ref = (refInput && refInput.value) ? refInput.value.trim() : "";
+  const d = new Date().toISOString().slice(0,10);
+  const safeRef = ref ? ref.replace(/[^a-zA-Z0-9_-]/g, "_") : "RCA";
+  return `RCA_Draft_${safeRef}_${d}.json`;
+}
+
+function downloadJson(obj, filename) {
+  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function saveAsDraftFile() {
+  const data = collectData();
+  downloadJson(data, fileNameFromRef());
+  setStatus("Draft saved to file.", true);
+}
+
+function loadDraftFile() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json,application/json";
+  input.onchange = function(e) {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        const data = JSON.parse(ev.target.result);
+        applyData(data);
+        setStatus("Draft loaded from file.", true);
+        scheduleAutosave();
+      } catch (err) {
+        alert("Error loading draft / خطأ في تحميل المسودة");
+      }
+    };
+    reader.readAsText(f);
+  };
+  input.click();
+}
+
+function saveToBrowser() {
+  const data = collectData();
+  localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
+  setStatus("Saved to browser.", true);
+}
+
+function loadFromBrowser() {
+  const raw = localStorage.getItem(AUTOSAVE_KEY);
+  if (!raw) {
+    alert("No browser draft found / لا توجد مسودة محفوظة في المتصفح");
+    return;
+  }
+  try {
+    const data = JSON.parse(raw);
+    applyData(data);
+    setStatus("Loaded from browser.", true);
+    scheduleAutosave();
+  } catch (e) {
+    alert("Browser draft corrupted / مسودة المتصفح تالفة");
+  }
+}
+
+function clearBrowserDraft() {
+  if (confirm("Remove the saved browser draft?\nهل تريد حذف مسودة المتصفح؟")) {
+    localStorage.removeItem(AUTOSAVE_KEY);
+    setStatus("Browser draft cleared.", true);
+  }
+}
+
+/* ---------- Autosave ---------- */
+let autosaveTimer = null;
+
+function setStatus(msg, flash=false) {
+  const el = document.getElementById("autosaveStatus");
+  if (!el) return;
+  el.textContent = msg ? `✅ ${msg}` : "";
+  if (flash) {
+    el.style.opacity = "1";
+    setTimeout(() => { el.style.opacity = "0.9"; }, 1200);
+  }
+}
+
+function scheduleAutosave() {
+  if (autosaveTimer) clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(() => {
+    try {
+      const data = collectData();
+      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
+      setStatus("Autosaved " + new Date().toLocaleTimeString(), true);
+    } catch (e) {}
+  }, 700);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const raw = localStorage.getItem(AUTOSAVE_KEY);
+  if (raw) {
+    try {
+      const data = JSON.parse(raw);
+      const anyFilled = Array.from(document.querySelectorAll('input[type="text"], input[type="date"], textarea'))
+        .some(el => (el.value || "").trim() !== "");
+      const anyChecked = Array.from(document.querySelectorAll('input[type="checkbox"], input[type="radio"]'))
+        .some(el => el.checked);
+      if (!anyFilled && !anyChecked) applyData(data);
+      setStatus("Autosave ready.", false);
+    } catch(e) {}
+  } else {
+    setStatus("Autosave ready.", false);
+  }
+
+  document.addEventListener("input", (e) => {
+    const t = e.target;
+    if (t && t.matches("input, textarea, select")) scheduleAutosave();
+  });
+  document.addEventListener("change", (e) => {
+    const t = e.target;
+    if (t && t.matches('input[type="checkbox"], input[type="radio"], select')) scheduleAutosave();
+  });
+});
+</script>
+</body>
+
+</html>
