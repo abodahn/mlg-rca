@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="Multi Level Group - Field Support Operations">
 <meta name="description" content="Root Cause Analysis Report Template - MLG Field Support SOP">
-<meta name="version" content="1.4">
+<meta name="version" content="1.3">
 <meta name="department" content="MLG Field Support & Hardware Operations">
 <title>RCA Report | MLG Field Support SOP | تقرير تحليل السبب الجذري</title>
 <style>
@@ -443,7 +443,7 @@
   <div class="header">
     <h1>Root Cause Analysis Report</h1>
     <h2>تقرير تحليل السبب الجذري</h2>
-    <div class="subtitle">MLG Field Support SOP — Document Version 1.4 | إجراء التشغيل القياسي للدعم الميداني</div>
+    <div class="subtitle">MLG Field Support SOP — Document Version 1.3 | إجراء التشغيل القياسي للدعم الميداني</div>
   </div>
 
   <div class="content">
@@ -457,7 +457,7 @@
       </div>
       <div class="wizard-meta">
         <span class="badge">Page <span id="pageNow">1</span>/3</span>
-        <span class="badge">Version 1.4</span>
+        <span class="badge">Version 1.3</span>
       </div>
     </div>
 
@@ -851,7 +851,7 @@
         <strong style="color: var(--primary);">التحكم بالوثائق:</strong> هذا النموذج جزء من إطار إجراءات التشغيل القياسية للدعم الميداني في مجموعة ملتي ليفل.
         <br><br>
         <span style="font-size: 10px;">
-          Document ID: MLG-SOP-RCA-001 &nbsp;|&nbsp; Version: 1.4 &nbsp;|&nbsp; Department: Field Support & Hardware Operations &nbsp;|&nbsp; 
+          Document ID: MLG-SOP-RCA-001 &nbsp;|&nbsp; Version: 1.3 &nbsp;|&nbsp; Department: Field Support & Hardware Operations &nbsp;|&nbsp; 
           Prepared by: MLG Quality & Compliance &nbsp;|&nbsp; Effective Date: March 2026
         </span>
       </div>
@@ -863,7 +863,6 @@
 
   <!-- BUTTONS -->
   
-
 <div class="btn-bar">
     <button class="btn btn-primary" onclick="window.print()">🖨️ Print / طباعة</button>
     <button class="btn btn-accent" onclick="clearAll()">🗑️ Clear All / مسح الكل</button>
@@ -871,20 +870,33 @@
     <button class="btn" id="btnPrev" style="background:#34495E;color:white;" onclick="prevPage()">⬅️ Previous / السابق</button>
     <button class="btn" id="btnNext" style="background:#1B3A5C;color:white;" onclick="nextPage()">Next / التالي ➡️</button>
 
+
     <button class="btn" style="background:#2ECC71;color:white;" onclick="exportToExcel()">📊 Export Excel / تصدير إكسل</button>
+
+    <button class="btn" style="background:#27AE60;color:white;" onclick="saveAsDraftFile()">💾 Save Draft (JSON) / حفظ مسودة</button>
+    <button class="btn" style="background:#3498DB;color:white;" onclick="loadDraftFile()">📂 Load Draft (JSON) / تحميل مسودة</button>
+
+    <button class="btn" style="background:#8E44AD;color:white;" onclick="saveToBrowser()">🧠 Save to Browser / حفظ في المتصفح</button>
+    <button class="btn" style="background:#16A085;color:white;" onclick="loadFromBrowser()">↩️ Load from Browser / تحميل من المتصفح</button>
+    <button class="btn" style="background:#7F8C8D;color:white;" onclick="clearBrowserDraft()">🧹 Clear Browser Draft / مسح مسودة المتصفح</button>
+
+    <span id="autosaveStatus" style="margin-left:10px;font-size:12px;color:#444;align-self:center;"></span>
 </div>
 </div>
 
 <script>
 
-
 /**
- * MLG RCA Template v1.4
- * - 3-page wizard (Next/Previous)
- * - Print-friendly (prints all pages)
- * - Export to Excel (formatted)
+ * MLG RCA Template v1.1 Enhancements
+ * - Stable(ish) field keys (no more numeric-only indexing)
+ * - Autosave to localStorage (latest draft)
+ * - Save/Load Draft as JSON file (portable)
+ * - Save/Load Draft in browser (quick)
  */
-const TEMPLATE_VERSION = "1.4";
+const TEMPLATE_VERSION = "1.3";
+const AUTOSAVE_KEY = "MLG_RCA_AUTOSAVE_LATEST_V1_3";
+
+
 /* ---------- Wizard (3 Pages) ---------- */
 let CURRENT_PAGE = 1;
 
@@ -1381,7 +1393,7 @@ function exportToExcel() {
       [{v:"Detailed Report / التقرير التفصيلي", style:"Label"}, {v:detailed, style:"Value"}],
       [{v:"Impact on Operations / التأثير على العمليات", style:"Label"}, {v:impact, style:"Value"}],
       [{v:"Affected Components / المكونات المتأثرة", style:"Label"}, {v:affected, style:"Value"}],
-      [{v:"Document: MLG-SOP-RCA-001 | Version: 1.4", style:"SmallGray", mergeAcross:1}],
+      [{v:"Document: MLG-SOP-RCA-001 | Version: 1.3", style:"SmallGray", mergeAcross:1}],
     ]
   };
 
@@ -1558,7 +1570,7 @@ function exportToExcel() {
         {v:"", style:"Cell"},
         {v:"", style:"Cell"},
       ]))),
-      [{v:"Document: MLG-SOP-RCA-001 | Version: 1.4 | Exported: " + new Date().toLocaleString(), style:"SmallGray", mergeAcross:5}],
+      [{v:"Document: MLG-SOP-RCA-001 | Version: 1.3 | Exported: " + new Date().toLocaleString(), style:"SmallGray", mergeAcross:5}],
     ]
   };
 
@@ -1571,22 +1583,117 @@ function exportToExcel() {
   a.download = filename;
   a.click();
   URL.revokeObjectURL(a.href);
-  alert("Excel exported successfully!\nتم تصدير الإكسل بنجاح!");
+  setStatus("Excel exported.", true);
 }
 
 
 
 /* ---------- Actions ---------- */
 function clearAll() {
-  if (confirm('Are you sure you want to clear all fields?
-هل أنت متأكد من مسح جميع الحقول؟')) {
+  if (confirm('Are you sure you want to clear all fields?\nهل أنت متأكد من مسح جميع الحقول؟')) {
     document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = '');
     document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
+    setStatus("Cleared.", true);
+    scheduleAutosave();
   }
 }
 
+function fileNameFromRef() {
+  const refInput = document.querySelector('input[placeholder="RCA-XXXX-XXX"]');
+  const ref = (refInput && refInput.value) ? refInput.value.trim() : "";
+  const d = new Date().toISOString().slice(0,10);
+  const safeRef = ref ? ref.replace(/[^a-zA-Z0-9_-]/g, "_") : "RCA";
+  return `RCA_Draft_${safeRef}_${d}.json`;
 }
 
+function downloadJson(obj, filename) {
+  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function saveAsDraftFile() {
+  const data = collectData();
+  downloadJson(data, fileNameFromRef());
+  setStatus("Draft saved to file.", true);
+}
+
+function loadDraftFile() {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json,application/json";
+  input.onchange = function(e) {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        const data = JSON.parse(ev.target.result);
+        applyData(data);
+        setStatus("Draft loaded from file.", true);
+        scheduleAutosave();
+      } catch (err) {
+        alert("Error loading draft / خطأ في تحميل المسودة");
+      }
+    };
+    reader.readAsText(f);
+  };
+  input.click();
+}
+
+function saveToBrowser() {
+  const data = collectData();
+  localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
+  setStatus("Saved to browser.", true);
+}
+
+function loadFromBrowser() {
+  const raw = localStorage.getItem(AUTOSAVE_KEY);
+  if (!raw) {
+    alert("No browser draft found / لا توجد مسودة محفوظة في المتصفح");
+    return;
+  }
+  try {
+    const data = JSON.parse(raw);
+    applyData(data);
+    setStatus("Loaded from browser.", true);
+    scheduleAutosave();
+  } catch (e) {
+    alert("Browser draft corrupted / مسودة المتصفح تالفة");
+  }
+}
+
+function clearBrowserDraft() {
+  if (confirm("Remove the saved browser draft?\nهل تريد حذف مسودة المتصفح؟")) {
+    localStorage.removeItem(AUTOSAVE_KEY);
+    setStatus("Browser draft cleared.", true);
+  }
+}
+
+/* ---------- Autosave ---------- */
+let autosaveTimer = null;
+
+function setStatus(msg, flash=false) {
+  const el = document.getElementById("autosaveStatus");
+  if (!el) return;
+  el.textContent = msg ? `✅ ${msg}` : "";
+  if (flash) {
+    el.style.opacity = "1";
+    setTimeout(() => { el.style.opacity = "0.9"; }, 1200);
+  }
+}
+
+function scheduleAutosave() {
+  if (autosaveTimer) clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(() => {
+    try {
+      const data = collectData();
+      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
+      setStatus("Autosaved " + new Date().toLocaleTimeString(), true);
+    } catch (e) {}
   }, 700);
 }
 
@@ -1596,6 +1703,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const savedPage = parseInt(sessionStorage.getItem("MLG_RCA_CURRENT_PAGE") || "1", 10);
     setActivePage(savedPage, false);
   } catch(e) { setActivePage(1, false); }
+
+const raw = localStorage.getItem(AUTOSAVE_KEY);
+  if (raw) {
+    try {
+      const data = JSON.parse(raw);
+      const anyFilled = Array.from(document.querySelectorAll('input[type="text"], input[type="date"], textarea'))
+        .some(el => (el.value || "").trim() !== "");
+      const anyChecked = Array.from(document.querySelectorAll('input[type="checkbox"], input[type="radio"]'))
+        .some(el => el.checked);
+      if (!anyFilled && !anyChecked) applyData(data);
+      setStatus("Autosave ready.", false);
+    } catch(e) {}
+  } else {
+    setStatus("Autosave ready.", false);
+  }
+
+  document.addEventListener("input", (e) => {
+    const t = e.target;
+    if (t && t.matches("input, textarea, select")) scheduleAutosave();
+  });
+  document.addEventListener("change", (e) => {
+    const t = e.target;
+    if (t && t.matches('input[type="checkbox"], input[type="radio"], select')) scheduleAutosave();
+  });
 });
 </script>
 </body>
