@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="Multi Level Group - Field Support Operations">
 <meta name="description" content="Root Cause Analysis Report Template - MLG Field Support SOP">
-<meta name="version" content="1.5">
+<meta name="version" content="1.6">
 <meta name="department" content="MLG Field Support & Hardware Operations">
 <title>RCA Report | MLG Field Support SOP | تقرير تحليل السبب الجذري</title>
 <style>
@@ -405,6 +405,40 @@
     font-weight: 600;
   }
 
+
+  /* Mobile fit + horizontal scroll for wide tables (v1.6) */
+  .table-wrap{
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-wrap .data-table{
+    min-width: 860px; /* keeps columns readable; scroll on mobile */
+  }
+
+  @media (max-width: 768px) {
+    body { overflow-x: hidden; }
+    /* Prevent iOS zoom on focus */
+    input, textarea, select { font-size: 16px; }
+
+    .wizard-nav{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: #fff;
+    }
+    .btn-bar{
+      position: sticky;
+      bottom: 0;
+      z-index: 50;
+      background: #fff;
+      flex-wrap: wrap;
+      padding: 12px 14px;
+    }
+    .table-wrap .data-table{ min-width: 780px; }
+  }
+
+
   @media print {
     /* In print: show all 3 pages */
     .page { display: block !important; }
@@ -443,7 +477,7 @@
   <div class="header">
     <h1>Root Cause Analysis Report</h1>
     <h2>تقرير تحليل السبب الجذري</h2>
-    <div class="subtitle">MLG Field Support SOP — Document Version 1.5 | إجراء التشغيل القياسي للدعم الميداني</div>
+    <div class="subtitle">MLG Field Support SOP — Document Version 1.6 | إجراء التشغيل القياسي للدعم الميداني</div>
   </div>
 
   <div class="content">
@@ -457,7 +491,7 @@
       </div>
       <div class="wizard-meta">
         <span class="badge">Page <span id="pageNow">1</span>/3</span>
-        <span class="badge">Version 1.5</span>
+        <span class="badge">Version 1.6</span>
       </div>
     </div>
 
@@ -583,7 +617,8 @@
         <span class="ar">٣. سجل استبدال القطع</span>
       </div>
       <div class="form-grid">
-        <table class="data-table parts-table">
+        <div class="table-wrap">
+<table class="data-table parts-table">
           <thead>
             <tr>
               <th style="width:40px">#</th>
@@ -602,6 +637,7 @@
             <tr><td class="row-num">4</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
           </tbody>
         </table>
+</div>
       </div>
     </div>
 
@@ -612,7 +648,8 @@
         <span class="ar">٤. التسلسل الزمني للأحداث</span>
       </div>
       <div class="form-grid">
-        <table class="data-table">
+        <div class="table-wrap">
+<table class="data-table">
           <thead>
             <tr>
               <th style="width:40px">#</th>
@@ -631,6 +668,7 @@
             <tr><td class="row-num">6</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
           </tbody>
         </table>
+</div>
       </div>
     </div>
 
@@ -679,7 +717,8 @@
         <span class="ar">٦. العوامل المساهمة</span>
       </div>
       <div class="form-grid">
-        <table class="data-table">
+        <div class="table-wrap">
+<table class="data-table">
           <thead>
             <tr>
               <th>Category<span class="ar">الفئة</span></th>
@@ -695,6 +734,7 @@
             <tr><td style="background:var(--light-bg);font-weight:600;padding:10px 12px;font-size:12px">Communication Gap<br><span style="color:#666;font-weight:400;font-family:Cairo">فجوة التواصل</span></td><td><input type="text"></td><td><input type="text"></td></tr>
           </tbody>
         </table>
+</div>
       </div>
     </div>
 
@@ -751,7 +791,8 @@
         <span class="ar">٨. متابعة الإجراءات</span>
       </div>
       <div class="form-grid">
-        <table class="data-table">
+        <div class="table-wrap">
+<table class="data-table">
           <thead>
             <tr>
               <th style="width:35px">#</th>
@@ -769,6 +810,7 @@
             <tr><td class="row-num">4</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text" placeholder="H/M/L"></td><td><input type="text" placeholder="Open"></td></tr>
           </tbody>
         </table>
+</div>
       </div>
     </div>
 
@@ -855,7 +897,7 @@
         <strong style="color: var(--primary);">التحكم بالوثائق:</strong> هذا النموذج جزء من إطار إجراءات التشغيل القياسية للدعم الميداني في مجموعة ملتي ليفل.
         <br><br>
         <span style="font-size: 10px;">
-          Document ID: MLG-SOP-RCA-001 &nbsp;|&nbsp; Version: 1.5 &nbsp;|&nbsp; Department: Field Support & Hardware Operations &nbsp;|&nbsp; 
+          Document ID: MLG-SOP-RCA-001 &nbsp;|&nbsp; Version: 1.6 &nbsp;|&nbsp; Department: Field Support & Hardware Operations &nbsp;|&nbsp; 
           Prepared by: MLG Quality & Compliance &nbsp;|&nbsp; Effective Date: March 2026
         </span>
       </div>
@@ -887,7 +929,7 @@
  * - Export to Excel (formatted)
  * - MOJ site list: auto-fill Location <-> Machine ID
  */
-const TEMPLATE_VERSION = "1.5";
+const TEMPLATE_VERSION = "1.6";
 
 /* ---------- MOJ Site Master Data ---------- */
 const MOJ_SITES = [
