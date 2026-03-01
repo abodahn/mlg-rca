@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="Multi Level Group - Field Support Operations">
 <meta name="description" content="Root Cause Analysis Report Template - MLG Field Support SOP">
-<meta name="version" content="1.1">
+<meta name="version" content="1.4">
 <meta name="department" content="MLG Field Support & Hardware Operations">
 <title>RCA Report | MLG Field Support SOP | تقرير تحليل السبب الجذري</title>
 <style>
@@ -348,6 +348,75 @@
   tr { break-inside: avoid; page-break-inside: avoid; }
 
 
+    /* 3-Page Wizard Layout (v1.3) */
+  .page { display: none; }
+  .page.active { display: block; }
+  .page + .page { margin-top: 0; border-top: none; padding-top: 0; }
+
+  /* Wizard top nav */
+  .wizard-nav {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #ffffff;
+    margin-bottom: 16px;
+  }
+  .wizard-steps{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .step-pill{
+    display:flex; gap:8px; align-items:center;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+    user-select:none;
+    background: var(--input-bg);
+  }
+  .step-pill strong{font-weight:700;}
+  .step-pill.active{
+    background: rgba(27,58,92,0.08);
+    border-color: var(--primary);
+  }
+  .step-pill.done{
+    background: rgba(39,174,96,0.10);
+    border-color: rgba(39,174,96,0.55);
+  }
+  .wizard-meta{
+    font-size: 12px;
+    color: var(--gray);
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .wizard-meta .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--light-bg);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media print {
+    /* In print: show all 3 pages */
+    .page { display: block !important; }
+    .page { page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
+    .wizard-nav { display: none; }
+  }
+.page:last-child { page-break-after: auto; }
+    .page + .page { margin-top: 0; border-top: none; padding-top: 0; }
+  }
+
+
   @media print {
     body { background: white; padding: 0; }
     .container { box-shadow: none; border-radius: 0; }
@@ -374,10 +443,25 @@
   <div class="header">
     <h1>Root Cause Analysis Report</h1>
     <h2>تقرير تحليل السبب الجذري</h2>
-    <div class="subtitle">MLG Field Support SOP — Document Version 1.1 | إجراء التشغيل القياسي للدعم الميداني</div>
+    <div class="subtitle">MLG Field Support SOP — Document Version 1.4 | إجراء التشغيل القياسي للدعم الميداني</div>
   </div>
 
   <div class="content">
+
+    <!-- Wizard Navigation (3 Pages) -->
+    <div class="wizard-nav" role="navigation" aria-label="RCA Wizard Navigation">
+      <div class="wizard-steps">
+        <div class="step-pill" data-step="1" onclick="gotoPage(1)"><strong>1</strong> Incident & Description <span style="font-family:Cairo;direction:rtl;color:#666;">| الحادثة</span></div>
+        <div class="step-pill" data-step="2" onclick="gotoPage(2)"><strong>2</strong> Analysis <span style="font-family:Cairo;direction:rtl;color:#666;">| التحليل</span></div>
+        <div class="step-pill" data-step="3" onclick="gotoPage(3)"><strong>3</strong> Actions & Sign-off <span style="font-family:Cairo;direction:rtl;color:#666;">| الإجراءات والتوقيع</span></div>
+      </div>
+      <div class="wizard-meta">
+        <span class="badge">Page <span id="pageNow">1</span>/3</span>
+        <span class="badge">Version 1.4</span>
+      </div>
+    </div>
+
+    <div class="page page-1 active">
 
     <!-- 1. INCIDENT INFORMATION -->
     <div class="section">
@@ -483,6 +567,10 @@
         </div>
       </div>
     </div>
+
+    </div>
+
+    <div class="page page-2">
 
     <!-- 3. PARTS REPLACEMENT LOG -->
     <div class="section">
@@ -605,6 +693,10 @@
         </table>
       </div>
     </div>
+
+    </div>
+
+    <div class="page page-3">
 
     <!-- 7. RECOMMENDATIONS (TICK BOXES) -->
     <div class="section">
@@ -759,41 +851,89 @@
         <strong style="color: var(--primary);">التحكم بالوثائق:</strong> هذا النموذج جزء من إطار إجراءات التشغيل القياسية للدعم الميداني في مجموعة ملتي ليفل.
         <br><br>
         <span style="font-size: 10px;">
-          Document ID: MLG-SOP-RCA-001 &nbsp;|&nbsp; Version: 1.1 &nbsp;|&nbsp; Department: Field Support & Hardware Operations &nbsp;|&nbsp; 
+          Document ID: MLG-SOP-RCA-001 &nbsp;|&nbsp; Version: 1.4 &nbsp;|&nbsp; Department: Field Support & Hardware Operations &nbsp;|&nbsp; 
           Prepared by: MLG Quality & Compliance &nbsp;|&nbsp; Effective Date: March 2026
         </span>
       </div>
     </div>
 
+    </div>
+
   </div>
 
   <!-- BUTTONS -->
-  <div class="btn-bar">
+  
+
+<div class="btn-bar">
     <button class="btn btn-primary" onclick="window.print()">🖨️ Print / طباعة</button>
     <button class="btn btn-accent" onclick="clearAll()">🗑️ Clear All / مسح الكل</button>
 
-    <button class="btn" style="background:#27AE60;color:white;" onclick="saveAsDraftFile()">💾 Save Draft (JSON) / حفظ مسودة</button>
-    <button class="btn" style="background:#3498DB;color:white;" onclick="loadDraftFile()">📂 Load Draft (JSON) / تحميل مسودة</button>
+    <button class="btn" id="btnPrev" style="background:#34495E;color:white;" onclick="prevPage()">⬅️ Previous / السابق</button>
+    <button class="btn" id="btnNext" style="background:#1B3A5C;color:white;" onclick="nextPage()">Next / التالي ➡️</button>
 
-    <button class="btn" style="background:#8E44AD;color:white;" onclick="saveToBrowser()">🧠 Save to Browser / حفظ في المتصفح</button>
-    <button class="btn" style="background:#16A085;color:white;" onclick="loadFromBrowser()">↩️ Load from Browser / تحميل من المتصفح</button>
-    <button class="btn" style="background:#7F8C8D;color:white;" onclick="clearBrowserDraft()">🧹 Clear Browser Draft / مسح مسودة المتصفح</button>
-
-    <span id="autosaveStatus" style="margin-left:10px;font-size:12px;color:#444;align-self:center;"></span>
+    <button class="btn" style="background:#2ECC71;color:white;" onclick="exportToExcel()">📊 Export Excel / تصدير إكسل</button>
 </div>
 </div>
-
 
 <script>
+
+
 /**
- * MLG RCA Template v1.1 Enhancements
- * - Stable(ish) field keys (no more numeric-only indexing)
- * - Autosave to localStorage (latest draft)
- * - Save/Load Draft as JSON file (portable)
- * - Save/Load Draft in browser (quick)
+ * MLG RCA Template v1.4
+ * - 3-page wizard (Next/Previous)
+ * - Print-friendly (prints all pages)
+ * - Export to Excel (formatted)
  */
-const TEMPLATE_VERSION = "1.1";
-const AUTOSAVE_KEY = "MLG_RCA_AUTOSAVE_LATEST_V1_1";
+const TEMPLATE_VERSION = "1.4";
+/* ---------- Wizard (3 Pages) ---------- */
+let CURRENT_PAGE = 1;
+
+function setActivePage(n, persist=true) {
+  const pages = Array.from(document.querySelectorAll(".page"));
+  const target = Math.max(1, Math.min(3, parseInt(n, 10) || 1));
+  CURRENT_PAGE = target;
+
+  pages.forEach((p, idx) => {
+    const pageNum = idx + 1;
+    p.classList.toggle("active", pageNum === target);
+  });
+
+  // Step pills
+  const pills = Array.from(document.querySelectorAll(".step-pill"));
+  pills.forEach(p => {
+    const step = parseInt(p.getAttribute("data-step") || "0", 10);
+    p.classList.toggle("active", step === target);
+    p.classList.toggle("done", step < target);
+  });
+
+  // Page indicator
+  const now = document.getElementById("pageNow");
+  if (now) now.textContent = String(target);
+
+  // Prev/Next buttons
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
+  if (btnPrev) btnPrev.disabled = (target === 1);
+  if (btnNext) {
+    btnNext.disabled = false;
+    btnNext.textContent = (target === 3) ? "Finish / إنهاء ✅" : "Next / التالي ➡️";
+  }
+
+  if (persist) {
+    try { sessionStorage.setItem("MLG_RCA_CURRENT_PAGE", String(target)); } catch(e) {}
+  }
+
+  // Scroll to top of content for UX
+  try { window.scrollTo({top: 0, behavior: "smooth"}); } catch(e) { window.scrollTo(0,0); }
+}
+
+function gotoPage(n) { setActivePage(n); }
+function nextPage() {
+  if (CURRENT_PAGE < 3) setActivePage(CURRENT_PAGE + 1);
+  else alert("RCA is complete. You can export Excel or print.\nاكتمل التقرير. يمكنك تصدير الإكسل أو الطباعة.");
+}
+function prevPage() { if (CURRENT_PAGE > 1) setActivePage(CURRENT_PAGE - 1); }
+
 
 /* ---------- Utilities ---------- */
 function normalizeKey(s) {
@@ -929,139 +1069,533 @@ function applyData(data) {
   });
 }
 
-/* ---------- Actions ---------- */
-function clearAll() {
-  if (confirm('Are you sure you want to clear all fields?\nهل أنت متأكد من مسح جميع الحقول؟')) {
-    document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = '');
-    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
-    setStatus("Cleared.", true);
-    scheduleAutosave();
+
+/* ---------- Excel Export (SpreadsheetML) ---------- */
+function xmlEscape(v) {
+  return (v ?? "").toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function getValueByLabel(labelStartsWith) {
+  const labels = Array.from(document.querySelectorAll(".field-label"));
+  const target = labels.find(l => {
+    const first = (l.childNodes && l.childNodes[0]) ? l.childNodes[0].textContent : l.textContent;
+    return (first || "").trim().startsWith(labelStartsWith);
+  });
+  if (!target) return "";
+  const field = target.closest(".form-field");
+  if (!field) return "";
+  const el = field.querySelector("input, textarea, select");
+  return el ? (el.value || "") : "";
+}
+
+function getTextareaByLabel(labelStartsWith) {
+  const labels = Array.from(document.querySelectorAll(".field-label"));
+  const target = labels.find(l => {
+    const first = (l.childNodes && l.childNodes[0]) ? l.childNodes[0].textContent : l.textContent;
+    return (first || "").trim().startsWith(labelStartsWith);
+  });
+  if (!target) return "";
+  const field = target.closest(".form-field");
+  if (!field) return "";
+  const el = field.querySelector("textarea");
+  return el ? (el.value || "") : "";
+}
+
+function getSeverity() {
+  const r = document.querySelector('input[name="severity"]:checked');
+  return r ? r.value : "";
+}
+
+function getTableInputs(tableSelector) {
+  const table = document.querySelector(tableSelector);
+  if (!table) return [];
+  const rows = Array.from(table.querySelectorAll("tbody tr"));
+  return rows.map(tr => {
+    const tds = Array.from(tr.querySelectorAll("td"));
+    // first td is row-num, rest have inputs
+    return tds.slice(1).map(td => {
+      const inp = td.querySelector("input, textarea, select");
+      return inp ? (inp.value || "") : (td.textContent || "").trim();
+    });
+  });
+}
+
+function getFiveWhys() {
+  const rows = Array.from(document.querySelectorAll(".why-row .why-input input"));
+  // order: Problem, Why1..Why5, Root Cause
+  return rows.map(r => r.value || "");
+}
+
+function getContributingFactors() {
+  const section = Array.from(document.querySelectorAll(".section"))
+    .find(s => (s.querySelector(".section-title .en")?.textContent || "").includes("Contributing Factors"));
+  if (!section) return [];
+  const table = section.querySelector("table.data-table");
+  if (!table) return [];
+  const rows = Array.from(table.querySelectorAll("tbody tr"));
+  return rows.map(tr => {
+    const tds = Array.from(tr.children);
+    const cat = (tds[0]?.innerText || "").split("\n")[0].trim();
+    const factor = tds[1]?.querySelector("input")?.value || "";
+    const details = tds[2]?.querySelector("input")?.value || "";
+    return [cat, factor, details];
+  });
+}
+
+function getRecommendations(groupIndex) {
+  // groupIndex 0 = immediate, 1 = preventive
+  const groups = Array.from(document.querySelectorAll(".section"))
+    .filter(s => (s.querySelector(".section-title .en")?.textContent || "").includes("Recommendations"))
+    .flatMap(s => Array.from(s.querySelectorAll(".checkbox-group")));
+  const group = groups[groupIndex];
+  if (!group) return {selected: [], other: ""};
+
+  const labels = Array.from(group.querySelectorAll("label"));
+  const selected = labels
+    .filter(l => l.querySelector('input[type="checkbox"]')?.checked)
+    .map(l => (l.querySelector(".label-text")?.childNodes?.[0]?.textContent || l.innerText || "").trim())
+    .filter(Boolean);
+
+  // other-input is inside the group (direct child input.other-input)
+  const other = group.querySelector("input.other-input")?.value || "";
+  return {selected, other};
+}
+
+function getSignOff() {
+  const section = Array.from(document.querySelectorAll(".section"))
+    .find(s => (s.querySelector(".section-title .en")?.textContent || "").includes("Review & Sign-Off"));
+  if (!section) return [];
+  const rows = Array.from(section.querySelectorAll(".sign-row")).slice(1); // skip header row
+  return rows.map(r => {
+    const cells = Array.from(r.querySelectorAll(".sign-cell"));
+    const role = (cells[0]?.innerText || "").split("\n")[0].trim();
+    const name = cells[1]?.querySelector("input")?.value || "";
+    const sig  = cells[2]?.querySelector("input")?.value || "";
+    const date = cells[3]?.querySelector("input")?.value || "";
+    return [role, name, sig, date];
+  });
+}
+
+function makeSpreadsheetML(workbookName, sheets) {
+  // sheets: [{name, columns:[width...], rows:[[{v, style, mergeAcross, mergeDown}...]]}]
+  const styles = `
+    <Styles>
+      <Style ss:ID="Default" ss:Name="Normal">
+        <Alignment ss:Vertical="Center" ss:WrapText="1"/>
+        <Borders/>
+        <Font ss:FontName="Calibri" ss:Size="11" ss:Color="#333333"/>
+        <Interior/>
+        <NumberFormat/>
+        <Protection/>
+      </Style>
+      <Style ss:ID="Title">
+        <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>
+        <Font ss:FontName="Calibri" ss:Size="16" ss:Bold="1" ss:Color="#1B3A5C"/>
+      </Style>
+      <Style ss:ID="SectionHeader">
+        <Alignment ss:Horizontal="Left" ss:Vertical="Center"/>
+        <Font ss:Bold="1" ss:Color="#FFFFFF"/>
+        <Interior ss:Color="#1B3A5C" ss:Pattern="Solid"/>
+      </Style>
+      <Style ss:ID="Label">
+        <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/>
+        <Font ss:Bold="1" ss:Color="#333333"/>
+        <Interior ss:Color="#EBF0F5" ss:Pattern="Solid"/>
+        <Borders>
+          <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+        </Borders>
+      </Style>
+      <Style ss:ID="Value">
+        <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/>
+        <Borders>
+          <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+        </Borders>
+      </Style>
+      <Style ss:ID="TableHeader">
+        <Alignment ss:Horizontal="Center" ss:Vertical="Center" ss:WrapText="1"/>
+        <Font ss:Bold="1" ss:Color="#FFFFFF"/>
+        <Interior ss:Color="#1B3A5C" ss:Pattern="Solid"/>
+        <Borders>
+          <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+        </Borders>
+      </Style>
+      <Style ss:ID="Cell">
+        <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/>
+        <Borders>
+          <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+          <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1" ss:Color="#D0D5DD"/>
+        </Borders>
+      </Style>
+      <Style ss:ID="SmallGray">
+        <Alignment ss:Horizontal="Left" ss:Vertical="Center" ss:WrapText="1"/>
+        <Font ss:Size="10" ss:Color="#666666"/>
+      </Style>
+    </Styles>`;
+
+  function cellXml(cell) {
+    const v = xmlEscape(cell.v ?? "");
+    const style = cell.style ? ` ss:StyleID="${cell.style}"` : "";
+    const mergeAcross = (cell.mergeAcross != null) ? ` ss:MergeAcross="${cell.mergeAcross}"` : "";
+    const mergeDown = (cell.mergeDown != null) ? ` ss:MergeDown="${cell.mergeDown}"` : "";
+    // Treat everything as string for simplicity
+    return `<Cell${style}${mergeAcross}${mergeDown}><Data ss:Type="String">${v}</Data></Cell>`;
   }
+
+  function rowXml(row) {
+    return `<Row>${row.map(cellXml).join("")}</Row>`;
+  }
+
+  function sheetXml(sheet) {
+    const cols = (sheet.columns || []).map(w => `<Column ss:AutoFitWidth="0" ss:Width="${w}"/>`).join("");
+    const rows = (sheet.rows || []).map(rowXml).join("");
+    return `
+      <Worksheet ss:Name="${xmlEscape(sheet.name)}">
+        <Table>${cols}${rows}</Table>
+        <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+          <Print>
+            <ValidPrinterInfo/>
+            <PaperSizeIndex>9</PaperSizeIndex>
+            <Scale>90</Scale>
+            <FitWidth>1</FitWidth>
+            <FitHeight>0</FitHeight>
+          </Print>
+        </WorksheetOptions>
+      </Worksheet>`;
+  }
+
+  return `<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+  <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+    <Title>${xmlEscape(workbookName)}</Title>
+    <Author>MLG Field Support</Author>
+    <Created>${new Date().toISOString()}</Created>
+  </DocumentProperties>
+  ${styles}
+  ${sheets.map(sheetXml).join("\n")}
+</Workbook>`;
 }
 
-function fileNameFromRef() {
-  const refInput = document.querySelector('input[placeholder="RCA-XXXX-XXX"]');
-  const ref = (refInput && refInput.value) ? refInput.value.trim() : "";
-  const d = new Date().toISOString().slice(0,10);
-  const safeRef = ref ? ref.replace(/[^a-zA-Z0-9_-]/g, "_") : "RCA";
-  return `RCA_Draft_${safeRef}_${d}.json`;
-}
 
-function downloadJson(obj, filename) {
-  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+function exportToExcel() {
+  // --- Collect data ---
+  const incidentRef = getValueByLabel("Incident Ref No.");
+  const dateIncident = getValueByLabel("Date of Incident");
+  const machineId = getValueByLabel("Machine ID");
+  const location = getValueByLabel("Location / Site");
+  const projectName = getValueByLabel("Project Name");
+  const preparedBy = getValueByLabel("Report Prepared By");
+  const dateReported = getValueByLabel("Date Reported");
+  const severity = getSeverity();
+  const pm = getValueByLabel("Project Manager");
+  const fe = getValueByLabel("Field Engineer");
+  const sm = getValueByLabel("Support Manager");
+  const client = getValueByLabel("Client Contact");
+
+  const detailed = getTextareaByLabel("Detailed Report");
+  const impact = getTextareaByLabel("Impact on Operations");
+  const affected = getTextareaByLabel("Affected Components");
+
+  const parts = getTableInputs("table.parts-table");
+
+  // Timeline table (section 4)
+  let timelineRows = [];
+  const timelineSection = Array.from(document.querySelectorAll(".section"))
+    .find(s => (s.querySelector(".section-title .en")?.textContent || "").includes("Timeline of Events"));
+  if (timelineSection) {
+    const t = timelineSection.querySelector("table.data-table");
+    if (t) {
+      const rows = Array.from(t.querySelectorAll("tbody tr"));
+      timelineRows = rows.map(tr => Array.from(tr.querySelectorAll("td")).slice(1).map(td => td.querySelector("input")?.value || ""));
+    }
+  }
+
+  const whys = getFiveWhys();
+  const contrib = getContributingFactors();
+
+  const recImmediate = getRecommendations(0);
+  const recPrevent = getRecommendations(1);
+
+  // Action tracker table (section 8)
+  let actions = [];
+  const actionSection = Array.from(document.querySelectorAll(".section"))
+    .find(s => (s.querySelector(".section-title .en")?.textContent || "").includes("Action Tracker"));
+  if (actionSection) {
+    const t = actionSection.querySelector("table.data-table");
+    if (t) {
+      const rows = Array.from(t.querySelectorAll("tbody tr"));
+      actions = rows.map(tr => Array.from(tr.querySelectorAll("td")).slice(1).map(td => td.querySelector("input")?.value || ""));
+    }
+  }
+
+  const wrong = getTextareaByLabel("What Went Wrong");
+  const right = getTextareaByLabel("What Went Right");
+  const sop = getTextareaByLabel("SOP Updates Needed");
+
+  const signoff = getSignOff();
+
+  const fileDate = new Date().toISOString().slice(0,10);
+  const safeRef = (incidentRef || "RCA").replace(/[^a-zA-Z0-9_-]/g, "_");
+  const filename = `RCA_${safeRef}_${fileDate}.xls`;
+
+  // --- Sheet 1: Incident ---
+  const sheet1 = {
+    name: "Page1_Incident",
+    columns: [220, 520],
+    rows: [
+      [{v:"Root Cause Analysis Report (RCA) — MLG", style:"Title", mergeAcross:1}],
+      [{v:"Incident Information | معلومات الحادثة", style:"SectionHeader", mergeAcross:1}],
+      [{v:"Incident Ref No. / رقم مرجع الحادثة", style:"Label"}, {v:incidentRef, style:"Value"}],
+      [{v:"Date of Incident / تاريخ الحادثة", style:"Label"}, {v:dateIncident, style:"Value"}],
+      [{v:"Machine ID / رقم الجهاز", style:"Label"}, {v:machineId, style:"Value"}],
+      [{v:"Location / Site / الموقع", style:"Label"}, {v:location, style:"Value"}],
+      [{v:"Project Name / اسم المشروع", style:"Label"}, {v:projectName, style:"Value"}],
+      [{v:"Report Prepared By / أعد التقرير بواسطة", style:"Label"}, {v:preparedBy, style:"Value"}],
+      [{v:"Date Reported / تاريخ الإبلاغ", style:"Label"}, {v:dateReported, style:"Value"}],
+      [{v:"Severity / الخطورة", style:"Label"}, {v:severity, style:"Value"}],
+      [{v:"Project Manager / مدير المشروع", style:"Label"}, {v:pm, style:"Value"}],
+      [{v:"Field Engineer / مهندس الموقع", style:"Label"}, {v:fe, style:"Value"}],
+      [{v:"Support Manager / مدير الدعم", style:"Label"}, {v:sm, style:"Value"}],
+      [{v:"Client Contact / جهة اتصال العميل", style:"Label"}, {v:client, style:"Value"}],
+      [{v:"Incident Description | وصف الحادثة", style:"SectionHeader", mergeAcross:1}],
+      [{v:"Detailed Report / التقرير التفصيلي", style:"Label"}, {v:detailed, style:"Value"}],
+      [{v:"Impact on Operations / التأثير على العمليات", style:"Label"}, {v:impact, style:"Value"}],
+      [{v:"Affected Components / المكونات المتأثرة", style:"Label"}, {v:affected, style:"Value"}],
+      [{v:"Document: MLG-SOP-RCA-001 | Version: 1.4", style:"SmallGray", mergeAcross:1}],
+    ]
+  };
+
+  // --- Sheet 2: Analysis ---
+  const partsHeader = [
+    {v:"#", style:"TableHeader"},
+    {v:"Part Name", style:"TableHeader"},
+    {v:"Old Part S/N", style:"TableHeader"},
+    {v:"New Part S/N", style:"TableHeader"},
+    {v:"Machine ID", style:"TableHeader"},
+    {v:"Location", style:"TableHeader"},
+    {v:"Reason", style:"TableHeader"},
+  ];
+  const partsRows = (parts || []).map((r, i) => ([
+    {v:String(i+1), style:"Cell"},
+    {v:r[0]||"", style:"Cell"},
+    {v:r[1]||"", style:"Cell"},
+    {v:r[2]||"", style:"Cell"},
+    {v:r[3]||"", style:"Cell"},
+    {v:r[4]||"", style:"Cell"},
+    {v:r[5]||"", style:"Cell"},
+  ]));
+
+  const timelineHeader = [
+    {v:"#", style:"TableHeader"},
+    {v:"Date", style:"TableHeader"},
+    {v:"Time", style:"TableHeader"},
+    {v:"Event / Action", style:"TableHeader"},
+    {v:"By Whom", style:"TableHeader"},
+  ];
+  const timelineRowsBuilt = (timelineRows || []).map((r, i) => ([
+    {v:String(i+1), style:"Cell"},
+    {v:r[0]||"", style:"Cell"},
+    {v:r[1]||"", style:"Cell"},
+    {v:r[2]||"", style:"Cell"},
+    {v:r[3]||"", style:"Cell"},
+  ]));
+
+  const whyLabels = ["Problem","Why 1","Why 2","Why 3","Why 4","Why 5","Root Cause"];
+  const whyTableHeader = [
+    {v:"Item", style:"TableHeader"},
+    {v:"Answer", style:"TableHeader", mergeAcross:5},
+    {v:"", style:"TableHeader"},
+    {v:"", style:"TableHeader"},
+    {v:"", style:"TableHeader"},
+    {v:"", style:"TableHeader"},
+    {v:"", style:"TableHeader"},
+  ];
+  const whyRows = whyLabels.map((lbl, i) => ([
+    {v:lbl, style:"Cell"},
+    {v:(whys[i]||""), style:"Cell", mergeAcross:5},
+    {v:"", style:"Cell"},
+    {v:"", style:"Cell"},
+    {v:"", style:"Cell"},
+    {v:"", style:"Cell"},
+    {v:"", style:"Cell"},
+  ]));
+
+  const contribHeader = [
+    {v:"Category", style:"TableHeader"},
+    {v:"Factor Identified", style:"TableHeader"},
+    {v:"Details / Evidence", style:"TableHeader"},
+  ];
+  const contribRows = (contrib || []).map(r => ([
+    {v:r[0]||"", style:"Cell"},
+    {v:r[1]||"", style:"Cell"},
+    {v:r[2]||"", style:"Cell"},
+  ]));
+
+  const sheet2 = {
+    name: "Page2_Analysis",
+    columns: [40, 170, 120, 120, 110, 140, 240],
+    rows: [
+      [{v:"RCA Analysis — Parts / Timeline / Five Whys / Contributing Factors", style:"Title", mergeAcross:6}],
+      [{v:"Parts Replacement Log | سجل استبدال القطع", style:"SectionHeader", mergeAcross:6}],
+      partsHeader,
+      ...partsRows,
+      [{v:"", style:"SmallGray", mergeAcross:6}],
+      [{v:"Timeline of Events | التسلسل الزمني", style:"SectionHeader", mergeAcross:6}],
+      timelineHeader,
+      ...timelineRowsBuilt,
+      [{v:"", style:"SmallGray", mergeAcross:6}],
+      [{v:"Root Cause Analysis (Five Whys) | تحليل السبب الجذري", style:"SectionHeader", mergeAcross:6}],
+      whyTableHeader,
+      ...whyRows,
+      [{v:"", style:"SmallGray", mergeAcross:6}],
+      [{v:"Contributing Factors | العوامل المساهمة", style:"SectionHeader", mergeAcross:6}],
+      // Contrib table uses first 3 columns, we pad remaining for consistent columns
+      [
+        {v:"Category", style:"TableHeader"},
+        {v:"Factor Identified", style:"TableHeader"},
+        {v:"Details / Evidence", style:"TableHeader"},
+        {v:"", style:"TableHeader"},
+        {v:"", style:"TableHeader"},
+        {v:"", style:"TableHeader"},
+        {v:"", style:"TableHeader"},
+      ],
+      ...(contribRows.map(r => ([
+        r[0], r[1], r[2],
+        {v:"", style:"Cell"},
+        {v:"", style:"Cell"},
+        {v:"", style:"Cell"},
+        {v:"", style:"Cell"},
+      ])))
+    ]
+  };
+
+  // --- Sheet 3: Actions & Sign-off ---
+  const actionHeader = [
+    {v:"#", style:"TableHeader"},
+    {v:"Action Item", style:"TableHeader"},
+    {v:"Assigned To", style:"TableHeader"},
+    {v:"Due Date", style:"TableHeader"},
+    {v:"Priority", style:"TableHeader"},
+    {v:"Status", style:"TableHeader"},
+  ];
+  const actionRowsBuilt = (actions || []).map((r, i) => ([
+    {v:String(i+1), style:"Cell"},
+    {v:r[0]||"", style:"Cell"},
+    {v:r[1]||"", style:"Cell"},
+    {v:r[2]||"", style:"Cell"},
+    {v:r[3]||"", style:"Cell"},
+    {v:r[4]||"", style:"Cell"},
+  ]));
+
+  const signHeader = [
+    {v:"Role", style:"TableHeader"},
+    {v:"Name", style:"TableHeader"},
+    {v:"Signature", style:"TableHeader"},
+    {v:"Date", style:"TableHeader"},
+  ];
+  const signRows = (signoff || []).map(r => ([
+    {v:r[0]||"", style:"Cell"},
+    {v:r[1]||"", style:"Cell"},
+    {v:r[2]||"", style:"Cell"},
+    {v:r[3]||"", style:"Cell"},
+  ]));
+
+  const sheet3 = {
+    name: "Page3_Actions",
+    columns: [70, 360, 160, 120, 90, 110],
+    rows: [
+      [{v:"RCA Actions & Sign-Off — Recommendations / Tracker / Lessons / Approvals", style:"Title", mergeAcross:5}],
+      [{v:"Recommendations — Immediate Corrective Actions", style:"SectionHeader", mergeAcross:5}],
+      [{v:"Selected Actions", style:"Label"}, {v:(recImmediate.selected.join("; ") || ""), style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
+      [{v:"Other", style:"Label"}, {v:(recImmediate.other || ""), style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
+      [{v:"Recommendations — Preventive Actions", style:"SectionHeader", mergeAcross:5}],
+      [{v:"Selected Actions", style:"Label"}, {v:(recPrevent.selected.join("; ") || ""), style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
+      [{v:"Other", style:"Label"}, {v:(recPrevent.other || ""), style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
+      [{v:"", style:"SmallGray", mergeAcross:5}],
+      [{v:"Action Tracker | متابعة الإجراءات", style:"SectionHeader", mergeAcross:5}],
+      actionHeader,
+      ...actionRowsBuilt,
+      [{v:"", style:"SmallGray", mergeAcross:5}],
+      [{v:"Lessons Learned | الدروس المستفادة", style:"SectionHeader", mergeAcross:5}],
+      [{v:"What Went Wrong", style:"Label"}, {v:wrong, style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
+      [{v:"What Went Right", style:"Label"}, {v:right, style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
+      [{v:"SOP Updates Needed", style:"Label"}, {v:sop, style:"Value", mergeAcross:4}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}, {v:"", style:"Value"}],
+      [{v:"", style:"SmallGray", mergeAcross:5}],
+      [{v:"Review & Sign-Off | المراجعة والتوقيع", style:"SectionHeader", mergeAcross:5}],
+      [
+        {v:"Role", style:"TableHeader"},
+        {v:"Name", style:"TableHeader"},
+        {v:"Signature", style:"TableHeader"},
+        {v:"Date", style:"TableHeader"},
+        {v:"", style:"TableHeader"},
+        {v:"", style:"TableHeader"},
+      ],
+      ...(signRows.map(r => ([
+        r[0],
+        r[1],
+        r[2],
+        r[3],
+        {v:"", style:"Cell"},
+        {v:"", style:"Cell"},
+      ]))),
+      [{v:"Document: MLG-SOP-RCA-001 | Version: 1.4 | Exported: " + new Date().toLocaleString(), style:"SmallGray", mergeAcross:5}],
+    ]
+  };
+
+  // Build workbook XML
+  const xml = makeSpreadsheetML("MLG RCA Report", [sheet1, sheet2, sheet3]);
+
+  const blob = new Blob([xml], { type: "application/vnd.ms-excel" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
   a.download = filename;
   a.click();
   URL.revokeObjectURL(a.href);
+  alert("Excel exported successfully!\nتم تصدير الإكسل بنجاح!");
 }
 
-function saveAsDraftFile() {
-  const data = collectData();
-  downloadJson(data, fileNameFromRef());
-  setStatus("Draft saved to file.", true);
-}
 
-function loadDraftFile() {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".json,application/json";
-  input.onchange = function(e) {
-    const f = e.target.files && e.target.files[0];
-    if (!f) return;
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-      try {
-        const data = JSON.parse(ev.target.result);
-        applyData(data);
-        setStatus("Draft loaded from file.", true);
-        scheduleAutosave();
-      } catch (err) {
-        alert("Error loading draft / خطأ في تحميل المسودة");
-      }
-    };
-    reader.readAsText(f);
-  };
-  input.click();
-}
 
-function saveToBrowser() {
-  const data = collectData();
-  localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
-  setStatus("Saved to browser.", true);
-}
-
-function loadFromBrowser() {
-  const raw = localStorage.getItem(AUTOSAVE_KEY);
-  if (!raw) {
-    alert("No browser draft found / لا توجد مسودة محفوظة في المتصفح");
-    return;
-  }
-  try {
-    const data = JSON.parse(raw);
-    applyData(data);
-    setStatus("Loaded from browser.", true);
-    scheduleAutosave();
-  } catch (e) {
-    alert("Browser draft corrupted / مسودة المتصفح تالفة");
+/* ---------- Actions ---------- */
+function clearAll() {
+  if (confirm('Are you sure you want to clear all fields?
+هل أنت متأكد من مسح جميع الحقول؟')) {
+    document.querySelectorAll('input[type="text"], input[type="date"], textarea').forEach(el => el.value = '');
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
   }
 }
 
-function clearBrowserDraft() {
-  if (confirm("Remove the saved browser draft?\nهل تريد حذف مسودة المتصفح؟")) {
-    localStorage.removeItem(AUTOSAVE_KEY);
-    setStatus("Browser draft cleared.", true);
-  }
 }
 
-/* ---------- Autosave ---------- */
-let autosaveTimer = null;
-
-function setStatus(msg, flash=false) {
-  const el = document.getElementById("autosaveStatus");
-  if (!el) return;
-  el.textContent = msg ? `✅ ${msg}` : "";
-  if (flash) {
-    el.style.opacity = "1";
-    setTimeout(() => { el.style.opacity = "0.9"; }, 1200);
-  }
-}
-
-function scheduleAutosave() {
-  if (autosaveTimer) clearTimeout(autosaveTimer);
-  autosaveTimer = setTimeout(() => {
-    try {
-      const data = collectData();
-      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
-      setStatus("Autosaved " + new Date().toLocaleTimeString(), true);
-    } catch (e) {}
   }, 700);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const raw = localStorage.getItem(AUTOSAVE_KEY);
-  if (raw) {
-    try {
-      const data = JSON.parse(raw);
-      const anyFilled = Array.from(document.querySelectorAll('input[type="text"], input[type="date"], textarea'))
-        .some(el => (el.value || "").trim() !== "");
-      const anyChecked = Array.from(document.querySelectorAll('input[type="checkbox"], input[type="radio"]'))
-        .some(el => el.checked);
-      if (!anyFilled && !anyChecked) applyData(data);
-      setStatus("Autosave ready.", false);
-    } catch(e) {}
-  } else {
-    setStatus("Autosave ready.", false);
-  }
-
-  document.addEventListener("input", (e) => {
-    const t = e.target;
-    if (t && t.matches("input, textarea, select")) scheduleAutosave();
-  });
-  document.addEventListener("change", (e) => {
-    const t = e.target;
-    if (t && t.matches('input[type="checkbox"], input[type="radio"], select')) scheduleAutosave();
-  });
+  // Restore wizard page
+  try {
+    const savedPage = parseInt(sessionStorage.getItem("MLG_RCA_CURRENT_PAGE") || "1", 10);
+    setActivePage(savedPage, false);
+  } catch(e) { setActivePage(1, false); }
 });
 </script>
 </body>
